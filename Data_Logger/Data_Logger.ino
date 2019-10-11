@@ -57,6 +57,7 @@ void setup()
   
   myFile.open(fileName, FILE_WRITE);
   myFile.println("test data");
+  myFile.close();
   Serial.println(fileName);
 }
 
