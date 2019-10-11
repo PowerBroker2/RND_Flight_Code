@@ -1,9 +1,11 @@
 #include <SdFat.h>
 #include <SerialTransfer.h>
 
+
 SerialTransfer myTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
+
 
 char fileName[] = {'t',
                    'e',
@@ -15,6 +17,7 @@ char fileName[] = {'t',
                    't',
                    'x',
                    't'};
+
 
 struct telemetry
 {
@@ -34,6 +37,7 @@ struct telemetry
   float courseOverGround; //degrees
 } telemetry;
 
+
 void setup()
 {
   Serial.begin(115200);
@@ -51,6 +55,7 @@ void setup()
   myFile.println("test data");
   Serial.println(fileName);
 }
+
 
 void loop()
 {
@@ -73,8 +78,6 @@ void loop()
       telemetry.speedOverGround  = ((myTransfer.rxBuff[20] << 8) | myTransfer.rxBuff[21]) / 100.0;
       telemetry.courseOverGround = ((myTransfer.rxBuff[22] << 8) | myTransfer.rxBuff[23]) / 100.0;
     }
-
-    
 
     myFile.print(telemetry.altitude,   5);      myFile.print(',');
     myFile.print(telemetry.rollAngle,  5);      myFile.print(',');
