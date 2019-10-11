@@ -9,16 +9,7 @@ SdFatSdioEX sd;
 SdFile myFile;
 
 
-char fileName[] = {'t',
-                   'e',
-                   's',
-                   't',
-                   '_',
-                   '1',
-                   '.',
-                   't',
-                   'x',
-                   't'};
+char fileName[] = {'t', 'e', 's', 't', '.', 't', 'x', 't'};
 
 
 struct telemetry
