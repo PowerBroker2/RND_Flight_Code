@@ -3,23 +3,10 @@
 
 
 
-Servo nose_wheel;
-Servo fpv_pan;
-Servo fpv_tilt;
-Servo bay_door;
-
-
-
-
 void setup()
 {
   //initialize the core flight controller software class
   myIFC.begin();
-
-  nose_wheel.attach(24);
-  fpv_pan.attach(26);
-  fpv_tilt.attach(27);
-  bay_door.attach(28);
 }
 
 
@@ -27,11 +14,6 @@ void setup()
 
 void loop()
 {
-  nose_wheel.write(myIFC.controlInputs.yaw_command);
-  fpv_pan.write(IFC_commandTransfer.rxBuff[16]);
-  fpv_tilt.write(constrain(IFC_commandTransfer.rxBuff[17], 80, 180));
-  bay_door.write(constrain(IFC_commandTransfer.rxBuff[18], 40, 140));
-  
   //get GPS data
   if(myIFC.grabData_GPS())
   {
