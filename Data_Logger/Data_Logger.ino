@@ -44,6 +44,10 @@ struct telemetry
 
 void setup()
 {
+  // turn on power led
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  
   Serial.begin(115200);
   Serial3.begin(9600);
 
