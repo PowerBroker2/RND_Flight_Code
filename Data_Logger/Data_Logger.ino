@@ -50,7 +50,7 @@ void setup()
   
   myFile.open(fileName, FILE_WRITE);
   myFile.println();
-  myFile.println(F("velocity, altitude, pitch, roll, lat, lon, year, month, day, hour, min, sec, sog, cog"));
+  myFile.println(F("altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog"));
   myFile.close();
 }
 
