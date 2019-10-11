@@ -90,5 +90,7 @@ void loop()
     myFile.print(telemetry.UTC_second);         myFile.print(',');
     myFile.print(telemetry.speedOverGround, 3); myFile.print(',');
     myFile.println(telemetry.courseOverGround, 3);
+    
+    myFile.close();
   }
 }
