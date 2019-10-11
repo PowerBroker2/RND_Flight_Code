@@ -2,6 +2,8 @@
 #include <SerialTransfer.h>
 
 
+
+
 SerialTransfer myTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
@@ -38,6 +40,8 @@ struct telemetry
 } telemetry;
 
 
+
+
 void setup()
 {
   Serial.begin(115200);
@@ -55,6 +59,8 @@ void setup()
   myFile.println("test data");
   Serial.println(fileName);
 }
+
+
 
 
 void loop()
