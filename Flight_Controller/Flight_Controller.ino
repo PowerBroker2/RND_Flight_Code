@@ -14,7 +14,6 @@ void setup()
 
 void loop()
 {
-  //get GPS data
   if(myIFC.grabData_GPS())
   {
     //optional debugging prints
@@ -31,7 +30,6 @@ void loop()
     IFC_DEBUG_PORT.println();*/
   }
 
-  //get IMU data
   if(myIFC.grabData_IMU())
   {
     //optional debugging prints
@@ -41,7 +39,6 @@ void loop()
     IFC_DEBUG_PORT.println();*/
   }
 
-  //get LiDAR altimeter data
   if(myIFC.grabData_LiDAR())
   {
     //optional debugging prints
@@ -49,7 +46,6 @@ void loop()
     IFC_DEBUG_PORT.println();*/
   }
 
-  //get airspeed data from the pitot tube
   if(myIFC.grabData_Pitot())
   {
     //optional debugging prints
