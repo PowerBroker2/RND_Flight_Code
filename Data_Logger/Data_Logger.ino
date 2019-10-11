@@ -8,7 +8,7 @@ SerialTransfer myTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
 
-char fileName[] = {'t', 'e', 's', 't', '.', 't', 'x', 't'};
+char fileName[] = {'t', 'e', 's', 't', 's', '.', 't', 'x', 't'};
 
 struct telemetry
 {
