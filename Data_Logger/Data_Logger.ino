@@ -50,7 +50,7 @@ void setup()
   
   myFile.open(fileName, FILE_WRITE);
   myFile.println();
-  myFile.println(F("altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog"));
+  myFile.println(F("millis, altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog"));
   myFile.close();
 }
 
@@ -80,7 +80,8 @@ void loop()
     }
     
     myFile.open(fileName, FILE_WRITE);
-    
+
+    myFile.print(millis());                     myFile.print(',');
     myFile.print(telemetry.altitude,   5);      myFile.print(',');
     myFile.print(telemetry.rollAngle,  5);      myFile.print(',');
     myFile.print(telemetry.pitchAngle, 5);      myFile.print(',');
