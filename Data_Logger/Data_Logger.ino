@@ -44,14 +44,14 @@ void setup()
 
   while (!sd.begin())
   {
-    Serial.println("\nSD iniatialization failed");
+    Serial.println(F("\nSD iniatialization failed"));
     delay(100);
   }
   
   myFile.open(fileName, FILE_WRITE);
-  myFile.println("test data");
+  myFile.println();
+  myFile.println(F("velocity, altitude, pitch, roll, lat, lon, year, month, day, hour, min, sec, sog, cog"));
   myFile.close();
-  Serial.println(fileName);
 }
 
 
