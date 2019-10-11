@@ -78,7 +78,9 @@ void loop()
       telemetry.speedOverGround  = ((myTransfer.rxBuff[20] << 8) | myTransfer.rxBuff[21]) / 100.0;
       telemetry.courseOverGround = ((myTransfer.rxBuff[22] << 8) | myTransfer.rxBuff[23]) / 100.0;
     }
-
+    
+    myFile.open(fileName, FILE_WRITE);
+    
     myFile.print(telemetry.altitude,   5);      myFile.print(',');
     myFile.print(telemetry.rollAngle,  5);      myFile.print(',');
     myFile.print(telemetry.pitchAngle, 5);      myFile.print(',');
