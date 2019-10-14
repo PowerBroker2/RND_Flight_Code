@@ -38,7 +38,7 @@ void setup()
   digitalWrite(13, HIGH);
   
   Serial.begin(115200);
-  Serial3.begin(9600);
+  Serial3.begin(115200);
 
   myTransfer.begin(Serial3);
 
