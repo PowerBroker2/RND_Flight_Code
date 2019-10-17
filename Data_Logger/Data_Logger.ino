@@ -26,6 +26,10 @@ struct telemetry
   float UTC_second;       //s
   float speedOverGround;  //knots
   float courseOverGround; //degrees
+  uint16_t throttle_command;
+  uint16_t pitch_command;
+  uint16_t yaw_command;
+  uint16_t roll_command;
 } telemetry;
 
 
@@ -38,7 +42,7 @@ void setup()
   digitalWrite(13, HIGH);
   
   Serial.begin(115200);
-  Serial3.begin(115200);
+  Serial3.begin(2000000);
 
   myTransfer.begin(Serial3);
 
@@ -61,23 +65,24 @@ void loop()
 {
   if(myTransfer.available() == NEW_DATA)
   {
-    for(byte i = 0; i < 24; i++)
-    {
-      telemetry.velocity         = ((myTransfer.rxBuff[0]  << 8) | myTransfer.rxBuff[1])  / 100.0;
-      telemetry.altitude         = ((myTransfer.rxBuff[2]  << 8) | myTransfer.rxBuff[3])  / 100.0;
-      telemetry.pitchAngle       = ((myTransfer.rxBuff[4]  << 8) | myTransfer.rxBuff[5])  / 100.0;
-      telemetry.rollAngle        = ((myTransfer.rxBuff[6]  << 8) | myTransfer.rxBuff[7])  / 100.0;
-      telemetry.latitude         = ((myTransfer.rxBuff[8]  << 8) | myTransfer.rxBuff[9])  / 100.0;
-      telemetry.longitude        = ((myTransfer.rxBuff[10] << 8) | myTransfer.rxBuff[11]) / 100.0;
-      telemetry.UTC_year         =  (myTransfer.rxBuff[12] << 8) | myTransfer.rxBuff[13];
-      telemetry.UTC_month        =   myTransfer.rxBuff[14];
-      telemetry.UTC_day          =   myTransfer.rxBuff[15];
-      telemetry.UTC_hour         =   myTransfer.rxBuff[16];
-      telemetry.UTC_minute       =   myTransfer.rxBuff[17];
-      telemetry.UTC_second       = ((myTransfer.rxBuff[18] << 8) | myTransfer.rxBuff[19]) / 100.0;
-      telemetry.speedOverGround  = ((myTransfer.rxBuff[20] << 8) | myTransfer.rxBuff[21]) / 100.0;
-      telemetry.courseOverGround = ((myTransfer.rxBuff[22] << 8) | myTransfer.rxBuff[23]) / 100.0;
-    }
+    telemetry.velocity         = ((myTransfer.rxBuff[0]  << 8) | myTransfer.rxBuff[1])  / 100.0;
+    telemetry.altitude         = ((myTransfer.rxBuff[2]  << 8) | myTransfer.rxBuff[3])  / 100.0;
+    telemetry.pitchAngle       = ((myTransfer.rxBuff[4]  << 8) | myTransfer.rxBuff[5])  / 100.0;
+    telemetry.rollAngle        = ((myTransfer.rxBuff[6]  << 8) | myTransfer.rxBuff[7])  / 100.0;
+    telemetry.latitude         = ((myTransfer.rxBuff[8]  << 8) | myTransfer.rxBuff[9])  / 100.0;
+    telemetry.longitude        = ((myTransfer.rxBuff[10] << 8) | myTransfer.rxBuff[11]) / 100.0;
+    telemetry.UTC_year         =  (myTransfer.rxBuff[12] << 8) | myTransfer.rxBuff[13];
+    telemetry.UTC_month        =   myTransfer.rxBuff[14];
+    telemetry.UTC_day          =   myTransfer.rxBuff[15];
+    telemetry.UTC_hour         =   myTransfer.rxBuff[16];
+    telemetry.UTC_minute       =   myTransfer.rxBuff[17];
+    telemetry.UTC_second       = ((myTransfer.rxBuff[18] << 8) | myTransfer.rxBuff[19]) / 100.0;
+    telemetry.speedOverGround  = ((myTransfer.rxBuff[20] << 8) | myTransfer.rxBuff[21]) / 100.0;
+    telemetry.courseOverGround = ((myTransfer.rxBuff[22] << 8) | myTransfer.rxBuff[23]) / 100.0;
+    telemetry.throttle_command =  (myTransfer.rxBuff[24] << 8) | myTransfer.rxBuff[25];
+    telemetry.pitch_command    =  (myTransfer.rxBuff[26] << 8) | myTransfer.rxBuff[27];
+    telemetry.yaw_command      =  (myTransfer.rxBuff[28] << 8) | myTransfer.rxBuff[29];
+    telemetry.roll_command     =  (myTransfer.rxBuff[30] << 8) | myTransfer.rxBuff[31];
     
     myFile.open(fileName, FILE_WRITE);
 
