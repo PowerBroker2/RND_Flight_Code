@@ -5,6 +5,9 @@
 
 SerialTransfer telemTx;
 
+const uint16_t TELEM_REPORT_PERIOD_MS = 20;
+unsigned long  previous_time          = millis();
+
 
 
 
@@ -28,7 +31,11 @@ void loop()
   myIFC.updateServos();
   //myIFC.sendTelem();
 
-  sendToDatalogger();
+  if((millis() - previous_time) >= TELEM_REPORT_PERIOD_MS)
+  {
+    previous_time += TELEM_REPORT_PERIOD_MS;
+    sendToDatalogger();
+  }
 }
 
 
