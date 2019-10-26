@@ -86,21 +86,25 @@ void loop()
     
     myFile.open(fileName, FILE_WRITE);
 
-    myFile.print(millis());                     myFile.print(',');
-    myFile.print(telemetry.altitude,   5);      myFile.print(',');
-    myFile.print(telemetry.rollAngle,  5);      myFile.print(',');
-    myFile.print(telemetry.pitchAngle, 5);      myFile.print(',');
-    myFile.print(telemetry.velocity,   5);      myFile.print(',');
-    myFile.print(telemetry.latitude,   5);      myFile.print(',');
-    myFile.print(telemetry.longitude,  5);      myFile.print(',');
-    myFile.print(telemetry.UTC_year);           myFile.print(',');
-    myFile.print(telemetry.UTC_month);          myFile.print(',');
-    myFile.print(telemetry.UTC_day);            myFile.print(',');
-    myFile.print(telemetry.UTC_hour);           myFile.print(',');
-    myFile.print(telemetry.UTC_minute);         myFile.print(',');
-    myFile.print(telemetry.UTC_second);         myFile.print(',');
-    myFile.print(telemetry.speedOverGround, 3); myFile.print(',');
-    myFile.println(telemetry.courseOverGround, 3);
+    myFile.print(millis());                      myFile.print(',');
+    myFile.print(telemetry.altitude,   5);       myFile.print(',');
+    myFile.print(telemetry.rollAngle,  5);       myFile.print(',');
+    myFile.print(telemetry.pitchAngle, 5);       myFile.print(',');
+    myFile.print(telemetry.velocity,   5);       myFile.print(',');
+    myFile.print(telemetry.latitude,   5);       myFile.print(',');
+    myFile.print(telemetry.longitude,  5);       myFile.print(',');
+    myFile.print(telemetry.UTC_year);            myFile.print(',');
+    myFile.print(telemetry.UTC_month);           myFile.print(',');
+    myFile.print(telemetry.UTC_day);             myFile.print(',');
+    myFile.print(telemetry.UTC_hour);            myFile.print(',');
+    myFile.print(telemetry.UTC_minute);          myFile.print(',');
+    myFile.print(telemetry.UTC_second);          myFile.print(',');
+    myFile.print(telemetry.speedOverGround, 3);  myFile.print(',');
+    myFile.print(telemetry.courseOverGround, 3); myFile.print(',');
+    myFile.print(telemetry.throttle_command);    myFile.print(',');
+    myFile.print(telemetry.pitch_command);       myFile.print(',');
+    myFile.print(telemetry.yaw_command);         myFile.print(',');
+    myFile.println(telemetry.roll_command);
     
     myFile.close();
   }
