@@ -77,4 +77,10 @@ void sendToDatalogger()
   telemTx.txBuff[31] = (uint8_t)(myIFC.controlInputs.roll_command     & 0xFF);
 
   telemTx.sendData(32);
+
+  Serial.print("Altitude (cm): "); Serial.println(myIFC.telemetry.altitude);
+  Serial.print("Pitch Angle: "); Serial.println(myIFC.telemetry.pitchAngle);
+  Serial.print("Roll Angle: "); Serial.println(myIFC.telemetry.rollAngle);
+  Serial.print("Heading: "); Serial.println(myIFC.telemetry.courseAngle);
+  Serial.println();
 }
