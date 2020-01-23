@@ -49,7 +49,7 @@ void sendToDatalogger()
   sendLen = sizeof(myIFC.telemetry);
   
   myTransfer.txObj(myIFC.controlInputs, sizeof(myIFC.controlInputs), sendLen);
-  sendLen += sizeof(myIFC.telemetry);
+  sendLen += sizeof(myIFC.controlInputs);
 
   telemTx.sendData(sendLen);
 
