@@ -1,9 +1,11 @@
 #include "IFC_Tools.h"
+#include "FireTimer.h"
 
 
 
 
-SerialTransfer telemTx;
+SerialTransfer telemTransfer;
+FireTimer telemTimer;
 
 const uint16_t TELEM_REPORT_PERIOD_MS = 20;
 unsigned long  previous_time = millis();
@@ -16,7 +18,8 @@ void setup()
   myIFC.begin();
   Serial5.begin(2000000);
 
-  telemTx.begin(Serial5);
+  telemTransfer.begin(Serial5);
+  telemTimer.begin(TELEM_REPORT_PERIOD_MS);
 }
 
 
@@ -31,7 +34,7 @@ void loop()
   myIFC.updateServos();
   //myIFC.sendTelem();
 
-  if((millis() - previous_time) >= TELEM_REPORT_PERIOD_MS)
+  if(telemTimer.fire())
   {
     previous_time += TELEM_REPORT_PERIOD_MS;
     sendToDatalogger();
@@ -45,13 +48,13 @@ void sendToDatalogger()
 {
   uint16_t sendLen;
 
-  myTransfer.txObj(myIFC.telemetry, sizeof(myIFC.telemetry));
+  telemTransfer.txObj(myIFC.telemetry, sizeof(myIFC.telemetry));
   sendLen = sizeof(myIFC.telemetry);
   
-  myTransfer.txObj(myIFC.controlInputs, sizeof(myIFC.controlInputs), sendLen);
+  telemTransfer.txObj(myIFC.controlInputs, sizeof(myIFC.controlInputs), sendLen);
   sendLen += sizeof(myIFC.controlInputs);
 
-  telemTx.sendData(sendLen);
+  telemTransfer.sendData(sendLen);
 
   Serial.print("Altitude (cm): "); Serial.println(myIFC.telemetry.altitude);
   Serial.print("Pitch Angle: ");   Serial.println(myIFC.telemetry.pitchAngle);
