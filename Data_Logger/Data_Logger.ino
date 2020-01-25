@@ -4,7 +4,7 @@
 
 
 
-SerialTransfer myTransfer;
+SerialTransfer telemTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
 
@@ -53,7 +53,7 @@ void setup()
   Serial.begin(115200);
   Serial3.begin(2000000);
 
-  myTransfer.begin(Serial3);
+  telemTransfer.begin(Serial3);
 
   while (!sd.begin())
   {
@@ -72,14 +72,14 @@ void setup()
 
 void loop()
 {
-  if(myTransfer.available() == NEW_DATA)
+  if(telemTransfer.available() == NEW_DATA)
   {
     uint16_t recLen;
     
-    myTransfer.rxObj(telemetry, sizeof(telemetry));
+    telemTransfer.rxObj(telemetry, sizeof(telemetry));
     recLen = sizeof(telemetry);
 
-    myTransfer.txObj(controlInputs, sizeof(controlInputs), recLen);
+    telemTransfer.txObj(controlInputs, sizeof(controlInputs), recLen);
     recLen += sizeof(controlInputs);
     
     myFile.open(fileName, FILE_WRITE);
