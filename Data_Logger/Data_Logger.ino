@@ -8,7 +8,7 @@ SerialTransfer telemTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
 
-char fileName[] = {'t', 'e', 's', 't', 's', '.', 't', 'x', 't'};
+char filename[20];
 
 struct telemetry
 {
@@ -61,10 +61,7 @@ void setup()
     delay(100);
   }
   
-  myFile.open(fileName, FILE_WRITE);
-  myFile.println();
-  myFile.println(F("millis, altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog"));
-  myFile.close();
+  setupSD();
 }
 
 
@@ -82,7 +79,7 @@ void loop()
     telemTransfer.txObj(controlInputs, sizeof(controlInputs), recLen);
     recLen += sizeof(controlInputs);
     
-    myFile.open(fileName, FILE_WRITE);
+    myFile.open(filename, FILE_WRITE);
 
     myFile.print(millis());                       myFile.print(',');
     myFile.print(telemetry.altitude,   5);        myFile.print(',');
@@ -107,3 +104,65 @@ void loop()
     myFile.close();
   }
 }
+
+
+
+
+void setupSD()
+{
+  unsigned int flightCount = 1;
+
+  while (!sd.begin())
+  {
+    Serial.println(F("SD iniatialization failed"));
+    delay(100);
+  }
+
+  sprintf(filename, "flight_%d.txt", flightCount);
+
+  while(sd.exists(filename))
+  {
+    flightCount++;
+    sprintf(filename, "flight_%d.txt", flightCount);
+  }
+  
+  myFile.open(filename, FILE_WRITE);
+  myFile.println(F("millis, altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog, throttle command, yaw command, roll command"));
+  myFile.close();
+}
+
+
+
+
+void logData()
+{
+  char buff[50];
+  char target = "%f, %f, %f, %f, %f, %f, %d, %d, %d, %d, %d, %f, %f, %f, %d, %d, %d, %d";
+
+  sprintf(buff, target, millis(),
+                        telemetry.altitude,
+                        telemetry.rollAngle,
+                        telemetry.pitchAngle,
+                        telemetry.velocity,
+                        telemetry.latitude,
+                        telemetry.longitude,
+                        telemetry.UTC_year,
+                        telemetry.UTC_month,
+                        telemetry.UTC_day,
+                        telemetry.UTC_hour,
+                        telemetry.UTC_minute,
+                        telemetry.UTC_second,
+                        telemetry.speedOverGround,
+                        telemetry.courseOverGround,
+                        controlInputs.throttle_command,
+                        controlInputs.pitch_command,
+                        controlInputs.yaw_command,
+                        controlInputs.roll_command);
+  
+  myFile.open(filename, FILE_WRITE);
+  myFile.println(buff);
+  myFile.close();
+}
+
+
+
