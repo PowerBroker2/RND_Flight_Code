@@ -29,10 +29,8 @@ void loop()
 {
   myIFC.grabData_GPS();
   myIFC.grabData_IMU();
-  myIFC.grabData_LiDAR();
   myIFC.grabData_Pitot();
   myIFC.updateServos();
-  //myIFC.sendTelem();
 
   if(telemTimer.fire())
   {
@@ -55,10 +53,4 @@ void sendToDatalogger()
   sendLen += sizeof(myIFC.controlInputs);
 
   telemTransfer.sendData(sendLen);
-
-  Serial.print("Altitude (cm): "); Serial.println(myIFC.telemetry.altitude);
-  Serial.print("Pitch Angle: ");   Serial.println(myIFC.telemetry.pitchAngle);
-  Serial.print("Roll Angle: ");    Serial.println(myIFC.telemetry.rollAngle);
-  Serial.print("Heading: ");       Serial.println(myIFC.telemetry.courseAngle);
-  Serial.println();
 }
