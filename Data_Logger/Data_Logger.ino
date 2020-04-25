@@ -51,9 +51,9 @@ void setup()
   digitalWrite(13, HIGH);
   
   Serial.begin(115200);
-  Serial3.begin(2000000);
+  Serial1.begin(2000000);
 
-  telemTransfer.begin(Serial3);
+  telemTransfer.begin(Serial1);
 
   while (!sd.begin())
   {
@@ -69,7 +69,7 @@ void setup()
 
 void loop()
 {
-  if(telemTransfer.available() == NEW_DATA)
+  if(telemTransfer.available())
   {
     uint16_t recLen;
     
@@ -80,6 +80,17 @@ void loop()
     recLen += sizeof(controlInputs);
     
     logData();
+  }
+  else if (telemTransfer.status < 0)
+  {
+    Serial.print(F("ERROR: "));
+  
+    if(telemTransfer.status == -1)
+      Serial.println(F("CRC_ERROR"));
+    else if(telemTransfer.status == -2)
+      Serial.println(F("PAYLOAD_ERROR"));
+    else if(telemTransfer.status == -3)
+      Serial.println(F("STOP_BYTE_ERROR"));
   }
 }
 
@@ -114,24 +125,25 @@ void setupSD()
 
 void logData()
 {
-  char buff[50];
-  char target = "%f, %f, %f, %f, %f, %f, %d, %d, %d, %d, %d, %f, %f, %f, %d, %d, %d, %d";
+  char str_temp[6];
+  char buff[100];
+  char target[] = "%d, %s, %s, %s, %s, %s, %s, %d, %d, %d, %d, %d, %s, %s, %s, %d, %d, %d, %d";
 
   sprintf(buff, target, millis(),
-                        telemetry.altitude,
-                        telemetry.rollAngle,
-                        telemetry.pitchAngle,
-                        telemetry.velocity,
-                        telemetry.latitude,
-                        telemetry.longitude,
+                        dtostrf(telemetry.altitude, 4, 2, str_temp),
+                        dtostrf(telemetry.rollAngle, 4, 2, str_temp),
+                        dtostrf(telemetry.pitchAngle, 4, 2, str_temp),
+                        dtostrf(telemetry.velocity, 4, 2, str_temp),
+                        dtostrf(telemetry.latitude, 4, 2, str_temp),
+                        dtostrf(telemetry.longitude, 4, 2, str_temp),
                         telemetry.UTC_year,
                         telemetry.UTC_month,
                         telemetry.UTC_day,
                         telemetry.UTC_hour,
                         telemetry.UTC_minute,
-                        telemetry.UTC_second,
-                        telemetry.speedOverGround,
-                        telemetry.courseOverGround,
+                        dtostrf(telemetry.UTC_second, 4, 2, str_temp),
+                        dtostrf(telemetry.speedOverGround, 4, 2, str_temp),
+                        dtostrf(telemetry.courseOverGround, 4, 2, str_temp),
                         controlInputs.throttle_command,
                         controlInputs.pitch_command,
                         controlInputs.yaw_command,
@@ -141,6 +153,3 @@ void logData()
   myFile.println(buff);
   myFile.close();
 }
-
-
-
