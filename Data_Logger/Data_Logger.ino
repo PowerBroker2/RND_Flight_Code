@@ -1,5 +1,6 @@
 #include <SdFat.h>
 #include <SerialTransfer.h>
+#include "Shared_Tools.h"
 
 
 
@@ -7,39 +8,12 @@
 SerialTransfer telemTransfer;
 SdFatSdioEX sd;
 SdFile myFile;
+File root;
 
 char filename[20];
 
-struct telemetry
-{
-  float altitude;         //cm
-  float rollAngle;        //radians
-  float pitchAngle;       //radians
-  float velocity;         //m/s
-  float latitude;         //dd
-  float longitude;        //dd
-  uint16_t UTC_year;      //y
-  uint8_t UTC_month;      //M
-  uint8_t UTC_day;        //d
-  uint8_t UTC_hour;       //h
-  uint8_t UTC_minute;     //m
-  float UTC_second;       //s
-  float speedOverGround;  //knots
-  float courseOverGround; //degrees
-} telemetry;
-
-struct controlInputs
-{
-  bool limiter_enable; //enables and disables pitch and bank limiter
-  uint16_t pitch_command;
-  uint16_t roll_command;
-  uint16_t yaw_command;
-  uint16_t throttle_command;
-  uint16_t autopilot_command;
-  uint16_t limiter_command;
-  uint16_t gear_command;
-  uint16_t flaps_command;
-} controlInputs;
+telemetry_struct telemetry;
+controlInputs_struct controlInputs;
 
 
 
@@ -81,17 +55,8 @@ void loop()
     
     logData();
   }
-  else if (telemTransfer.status < 0)
-  {
-    Serial.print(F("ERROR: "));
-  
-    if(telemTransfer.status == -1)
-      Serial.println(F("CRC_ERROR"));
-    else if(telemTransfer.status == -2)
-      Serial.println(F("PAYLOAD_ERROR"));
-    else if(telemTransfer.status == -3)
-      Serial.println(F("STOP_BYTE_ERROR"));
-  }
+
+  handleCmds();
 }
 
 
@@ -153,3 +118,125 @@ void logData()
   myFile.println(buff);
   myFile.close();
 }
+
+
+
+
+void handleCmds()
+{
+  if (Serial.available())
+  {
+    char input[40] = { '\0' };
+    
+    readInput(input, sizeof(input));
+
+    char target[] = "ls";
+    if (stris(input, sizeof(input), target, sizeof(target)))
+    {
+      Serial.println(F("--------------------------------------------------"));
+      
+      root = sd.open("/");
+      printDirectory(root, 0);
+      
+      Serial.println(F("--------------------------------------------------"));
+      Serial.println();
+    }
+    else if (sd.exists(input))
+    {
+      Serial.println(F("--------------------------------------------------"));
+      Serial.print(input); Serial.println(" found:");
+
+      myFile.open(input, FILE_READ);
+      
+      int data;
+      while ((data = myFile.read()) >= 0)
+        Serial.write(data);
+        
+      myFile.close();
+
+      Serial.println(F("--------------------------------------------------"));
+      Serial.println();
+    }
+    else
+      Serial.println('?');
+  }
+}
+
+
+
+
+void readInput(char input[], uint8_t inputSize)
+{
+  uint8_t i = 0;
+  unsigned long markTime = millis();
+  
+  while (Serial.available())
+  {
+    char c = Serial.read();
+    
+    if ((millis() - markTime) >= 100)
+      break;
+    else if (c == '\n')
+      break;
+    else if (i >= inputSize)
+      break;
+
+    input[i] = c;
+    i++;
+  }
+}
+
+
+
+
+void printDirectory(File dir, int numTabs)
+{
+  char fileName[20];
+  
+  while (true)
+  {
+    File entry =  dir.openNextFile();
+    
+    if (!entry)
+      break;
+      
+    for (uint8_t i = 0; i < numTabs; i++)
+      Serial.print('\t');
+
+    entry.getName(fileName, sizeof(fileName));
+    Serial.print(fileName);
+    
+    if (entry.isDirectory())
+    {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    }
+    else
+    {
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    
+    entry.close();
+  }
+}
+
+
+
+
+bool stris(const char *input, const uint8_t inputSize, const char *target, const uint8_t targetSize)
+{
+  char newInput[inputSize] = { '\0' };
+  char newTarget[targetSize] = { '\0' };
+
+  memcpy(newInput, input, inputSize);
+  memcpy(newTarget, target, targetSize);
+
+  if ((strstr(newInput, newTarget) == newInput) && (newInput[targetSize] == '\0'))
+    return true;
+  else
+    return false;
+}
+
+
+
