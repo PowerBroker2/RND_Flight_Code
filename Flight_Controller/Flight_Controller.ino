@@ -10,6 +10,8 @@ const int16_t  NWLG_OFFSET            = -100;
 
 
 Servo nwlg;
+Servo pitchStab;
+Servo rollStab;
 
 
 
@@ -17,7 +19,14 @@ Servo nwlg;
 void setup()
 {
   myIFC.begin();
+  
   nwlg.attach(29);
+  pitchStab.attach(27);
+  rollStab.attach(28);
+
+  nwlg.write(90);
+  pitchStab.write(90);
+  rollStab.write(90);
 }
 
 
