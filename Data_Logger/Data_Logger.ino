@@ -81,7 +81,7 @@ void setupSD()
   }
   
   myFile.open(filename, FILE_WRITE);
-  myFile.println(F("millis, altitude, roll, pitch, velocity, lat, lon, year, month, day, hour, min, sec, sog, cog, throttle command, yaw command, roll command"));
+  myFile.println(F("epoch_ms,alt_cm,roll_deg,pitch_deg,velocity_m/s,lat_dd,lon_dd,year,month,day,hour,min,sec,sog,cog,throttle_command,pitch_command,yaw_command,roll_command"));
   myFile.close();
 }
 
@@ -92,7 +92,7 @@ void logData()
 {
   char str_temp[6];
   char buff[100];
-  char target[] = "%d, %s, %s, %s, %s, %s, %s, %d, %d, %d, %d, %d, %s, %s, %s, %d, %d, %d, %d";
+  char target[] = "%d,%s,%s,%s,%s,%s,%s,%d,%d,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d";
 
   sprintf(buff, target, millis(),
                         dtostrf(telemetry.altitude, 4, 2, str_temp),
@@ -130,8 +130,7 @@ void handleCmds()
     
     readInput(input, sizeof(input));
 
-    char target[] = "ls";
-    if (stris(input, sizeof(input), target, sizeof(target)))
+    if (!strcmp(input, "ls"))
     {
       Serial.println(F("--------------------------------------------------"));
       
@@ -140,6 +139,61 @@ void handleCmds()
       
       Serial.println(F("--------------------------------------------------"));
       Serial.println();
+    }
+    else if (strstr(input, "rm "))
+    {
+      char* p = strstr(input, "rm ") + 3;
+
+      char fileName[40] = { '\0' };
+
+      for (byte i=0; i<sizeof(fileName); i++)
+      {
+        fileName[i] = *p;
+        
+        if (*p == '\0')
+          break;
+
+        p++;
+      }
+
+      if (sd.exists(fileName))
+      {
+        Serial.print("Deleting File: ");
+        Serial.println(fileName);
+
+        myFile.open(fileName, O_WRITE);
+        myFile.remove();
+      }
+      else if (!strcmp(fileName, "all"))
+      {
+        char fileName_[20];
+      
+        while (true)
+        {
+          File entry =  root.openNextFile();
+          
+          if (!entry)
+            break;
+      
+          entry.getName(fileName_, sizeof(fileName_));
+          
+          if (!entry.isDirectory())
+          {
+            Serial.print("Deleting: ");
+            Serial.println(fileName_);
+            
+            myFile.open(fileName_, O_WRITE);
+            myFile.remove();
+          }
+          
+          entry.close();
+        }
+      }
+      else
+      {
+        Serial.print(fileName);
+        Serial.println(" not found");
+      }
     }
     else if (sd.exists(input))
     {
@@ -237,6 +291,3 @@ bool stris(const char *input, const uint8_t inputSize, const char *target, const
   else
     return false;
 }
-
-
-
