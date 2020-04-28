@@ -41,8 +41,8 @@ void loop()
   myIFC.sendTelem();
   
   nwlg.writeMicroseconds(constrain(map(myIFC.controlInputs.yaw_command, RUDDER_MIN, RUDDER_MAX, RUDDER_MAX, RUDDER_MIN) + NWLG_OFFSET, RUDDER_MIN, RUDDER_MAX));
-  pitchStab.writeMicroseconds(mapfloat(-myIFC.telemetry.pitchAngle, -90, 90, 1000, 2000));
-  rollStab.writeMicroseconds(mapfloat(myIFC.telemetry.rollAngle, -90, 90, 1000, 2000));
+  pitchStab.writeMicroseconds(constrain(mapfloat(-myIFC.telemetry.pitchAngle, -90, 90, 600, 2400) - 45, 1000, 2000));
+  rollStab.writeMicroseconds(mapfloat(myIFC.telemetry.rollAngle, -90, 90, 600, 2400));
 }
 
 
