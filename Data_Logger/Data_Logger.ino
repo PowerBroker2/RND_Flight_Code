@@ -69,11 +69,11 @@ void logData()
 
   sprintf(buff, target, millis(),
     dtostrf(telemetry.altitude, 4, 2, str_temp),
-    dtostrf(telemetry.rollAngle, 4, 2, str_temp),
-    dtostrf(telemetry.pitchAngle, 4, 2, str_temp),
-    dtostrf(telemetry.velocity, 4, 2, str_temp),
-    dtostrf(telemetry.latitude, 4, 2, str_temp),
-    dtostrf(telemetry.longitude, 4, 2, str_temp),
+    dtostrf(telemetry.rollAngle, 4, 6, str_temp),
+    dtostrf(telemetry.pitchAngle, 4, 6, str_temp),
+    dtostrf(telemetry.velocity, 4, 6, str_temp),
+    dtostrf(telemetry.latitude, 4, 7, str_temp),
+    dtostrf(telemetry.longitude, 4, 7, str_temp),
     telemetry.UTC_year,
     telemetry.UTC_month,
     telemetry.UTC_day,
@@ -89,6 +89,3 @@ void logData()
   
   myLog.log(buff);
 }
-
-
-
