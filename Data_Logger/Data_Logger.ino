@@ -61,7 +61,7 @@ void logData()
   telemTransfer.rxObj(telemetry, sizeof(telemetry));
   recLen = sizeof(telemetry);
 
-  telemTransfer.txObj(controlInputs, sizeof(controlInputs), recLen);
+  telemTransfer.rxObj(controlInputs, sizeof(controlInputs), recLen);
   recLen += sizeof(controlInputs);
 
   char str_alt[15];
