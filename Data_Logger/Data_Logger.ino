@@ -16,9 +16,11 @@ telemetry_struct telemetry;
 controlInputs_struct controlInputs;
 
 SerialTransfer telemTransfer;
+SdFatSdioEX sd;
+SdFile myFile;
+Terminal myTerminal;
 
-Log_Meta myLogMeta;
-Logger myLog;
+char filename[20];
 
 
 
@@ -34,10 +36,8 @@ void setup()
 
   telemTransfer.begin(Serial1);
 
-  strcpy(myLogMeta.nameTemplate, nameTemplate);
-  strcpy(myLogMeta.headerRow, headerRow);
-
-  while (!myLog.begin(myLogMeta));
+  while (!myTerminal.begin());
+  setupLog();
 }
 
 
@@ -48,7 +48,32 @@ void loop()
   if (telemTransfer.available())
     logData();
 
-  myLog.handleCmds();
+  myTerminal.handleCmds();
+}
+
+
+
+void setupLog()
+{
+  unsigned int flightCount = 1;
+
+  while (!sd.begin())
+  {
+    Serial.println(F("SD iniatialization failed"));
+    delay(100);
+  }
+
+  sprintf(filename, "flight_%d.txt", flightCount);
+
+  while(sd.exists(filename))
+  {
+    flightCount++;
+    sprintf(filename, "flight_%d.txt", flightCount);
+  }
+  
+  myFile.open(filename, FILE_WRITE);
+  myFile.println(headerRow);
+  myFile.close();
 }
 
 
@@ -108,5 +133,13 @@ void logData()
           controlInputs.yaw_command,
           controlInputs.roll_command);
 
-  myLog.log(buff);
+  if (!sd.exists(filename))
+    setupLog();
+
+  myFile.open(filename, FILE_WRITE);
+  myFile.println(buff);
+  myFile.close();
 }
+
+
+
