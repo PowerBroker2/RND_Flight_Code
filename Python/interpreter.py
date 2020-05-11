@@ -83,35 +83,42 @@ def flights_from_ser(connection):
     while connection.in_waiting:
         try:
             line = connection.readline().decode('utf-8')
-            print(' '.join(line.split()))
+            print(line.rstrip())
             
             if ('.txt' in line) or ('.csv' in line):
-                flight_files.append(line.split()[0])
+                flight_files.append(line.split()[1])
         except UnicodeDecodeError:
             pass
     
     return flight_files
 
 def grab_ser_data(connection, flight):
-    connection.write(flight.encode())
+    connection.write('print {}'.format(flight).encode())
     
     while b'?' in connection.readline():
-        connection.write(flight.encode())
+        connection.write('print {}'.format(flight).encode())
     
     data_lines = []
+    
+    header_found = False
+    footer_found = False
     
     while True:
         line = connection.readline()
         
         if (b'-' * 50) in line:
-            break
+            if not header_found and not footer_found:
+                header_found = True
+            else:
+                footer_found = True
+                break
         
         elif (b'.txt' not in line) and (b'.csv' not in line):
             data_lines.append(line)
     
     return data_lines
 
-def log_ser_data(connection):
+def log_ser_data(data_lines):
     with open(SER_DATA_PATH, 'w') as ser_data:
         for data_line in data_lines:
             write_line = ''
@@ -120,7 +127,7 @@ def log_ser_data(connection):
                 if chr(char).isascii():
                     write_line += chr(char)
             
-            if write_line.count(',') == 19:
+            if write_line.count(',') == 18:
                 ser_data.write(write_line.strip())
                 ser_data.write('\n')
 
@@ -148,7 +155,7 @@ if __name__ == '__main__':
                             print(flight)
                             
                             data_lines = grab_ser_data(connection, flight)
-                            log_ser_data(connection)
+                            log_ser_data(data_lines)
                             
                             if os.path.exists(SER_DATA_PATH):
                                 try:
@@ -171,7 +178,7 @@ if __name__ == '__main__':
                             print(flight)
                             
                             data_lines = grab_ser_data(connection, flight)
-                            log_ser_data(connection)
+                            log_ser_data(data_lines)
                             
                             if os.path.exists(SER_DATA_PATH):
                                 try:
