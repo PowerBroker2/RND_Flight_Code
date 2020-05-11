@@ -35,9 +35,10 @@ void setup()
   Serial1.begin(2000000);
 
   telemTransfer.begin(Serial1);
-
-  while (!myTerminal.begin());
+  
   setupLog();
+
+  myTerminal.begin(sd);
 }
 
 
@@ -140,6 +141,3 @@ void logData()
   myFile.println(buff);
   myFile.close();
 }
-
-
-
