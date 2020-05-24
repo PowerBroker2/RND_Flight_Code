@@ -1,5 +1,5 @@
 {"GSTools": {"AileronSettings": {"AileronAnalogPin": "A3",
-                                 "AileronReverse": "1",
+                                 "AileronReverse": "0",
                                  "MaxAileronADCValue": "41800",
                                  "MaxAileronServoValue": "2000",
                                  "MinAileronADCValue": "25000",
