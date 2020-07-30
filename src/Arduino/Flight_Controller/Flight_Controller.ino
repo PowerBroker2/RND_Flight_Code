@@ -10,6 +10,7 @@ const int16_t  NWLG_OFFSET            = -100;
 
 
 FireTimer camAnim;
+IFC_Class IFC;
 
 Servo nwlg;
 Servo rollStab;
@@ -24,7 +25,7 @@ bool anim = true;
 
 void setup()
 {
-  myIFC.begin();
+  IFC.begin();
 
   camAnim.begin(10);
   
@@ -46,17 +47,14 @@ void setup()
 
 void loop()
 {
-  myIFC.grabData_GPS();
-  myIFC.grabData_IMU();
-  myIFC.grabData_Pitot();
-  myIFC.sendTelem();
+  IFC.tick();
+
+  if (IFC.linkConnected)
+    IFC.updateServos();
   
-  if(myIFC.handleSerialEvents())
-    myIFC.updateServos();
-  
-  nwlg.writeMicroseconds(constrain(map(myIFC.controlInputs.yaw_command, RUDDER_MIN, RUDDER_MAX, RUDDER_MAX, RUDDER_MIN) + NWLG_OFFSET, RUDDER_MIN, RUDDER_MAX));
-  pitchStab.writeMicroseconds(constrain(mapfloat(-myIFC.telemetry.pitchAngle, -90, 90, 600, 2400) + 40, 1000, 2000));
-  rollStab.writeMicroseconds(mapfloat(myIFC.telemetry.rollAngle, -90, 90, 600, 2400) + 50);
+  nwlg.writeMicroseconds(constrain(map(IFC.controlInputs.yaw_command, RUDDER_MIN, RUDDER_MAX, RUDDER_MAX, RUDDER_MIN) + NWLG_OFFSET, RUDDER_MIN, RUDDER_MAX));
+  pitchStab.writeMicroseconds(constrain(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 600, 2400) + 40, 1000, 2000));
+  rollStab.writeMicroseconds(mapfloat(IFC.telemetry.rollAngle, -90, 90, 600, 2400) + 50);
 
   if (anim)
     animateCam();
@@ -100,12 +98,4 @@ void animateCam()
         anim = false;
     }
   }
-}
-
-
-
-
-float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
-{
- return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
