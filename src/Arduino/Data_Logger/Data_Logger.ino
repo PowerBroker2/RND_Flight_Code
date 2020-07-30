@@ -6,14 +6,14 @@
 
 
 const char nameTemplate[] = "flight_%d.txt";
-const char headerRow[] = "epoch_ms,alt_cm,roll_deg,pitch_deg,velocity_m/s,lat_dd,lon_dd,year,month,day,hour,min,sec,sog,cog,throttle_command,pitch_command,yaw_command,roll_command";
-char target[] = "%d,%s,%s,%s,%s,%s,%s,%d,%d,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d";
+const char headerRow[] = "epoch_ms,alt_cm,course_angle_imu,roll_deg,pitch_deg,velocity_m/s,lat_dd,lon_dd,year,month,day,hour,min,sec,sog,cog,throttle_command,pitch_command,yaw_command,roll_command";
+char target[] = "%d,%s,%s,%s,%s,%s,%d,%s,%s,%d,%d,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d";
 
 
 
 
 telemetry_struct telemetry;
-controlInputs_struct controlInputs;
+control_inputs_struct controlInputs;
 
 SerialTransfer telemTransfer;
 SdFatSdioEX sd;
@@ -82,15 +82,11 @@ void setupLog()
 
 void logData()
 {
-  uint16_t recLen;
-
-  telemTransfer.rxObj(telemetry, sizeof(telemetry));
-  recLen = sizeof(telemetry);
-
-  telemTransfer.rxObj(controlInputs, sizeof(controlInputs), recLen);
-  recLen += sizeof(controlInputs);
+  uint16_t recLen = telemTransfer.rxObj(telemetry);
+  recLen += telemTransfer.rxObj(controlInputs, recLen);
 
   char str_alt[15];
+  char str_coAngIMU[15];
   char str_roll[15];
   char str_pitch[15];
   char str_vel[15];
@@ -103,6 +99,7 @@ void logData()
   char buff[150];
 
   dtostrf(telemetry.altitude, 4, 2, str_alt);
+  dtostrf(telemetry.courseAngleIMU, 4, 2, str_alt);
   dtostrf(telemetry.rollAngle, 4, 6, str_roll);
   dtostrf(telemetry.pitchAngle, 4, 6, str_pitch);
   dtostrf(telemetry.velocity, 4, 6, str_vel);
@@ -116,9 +113,11 @@ void logData()
           target,
           millis(),
           str_alt,
+          str_coAngIMU,
           str_roll,
           str_pitch,
           str_vel,
+          telemetry.validFlags,
           str_lat,
           str_lon,
           telemetry.UTC_year,
