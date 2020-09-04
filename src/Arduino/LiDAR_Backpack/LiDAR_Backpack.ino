@@ -27,6 +27,6 @@ void loop()
 
 void sendDistance(const float &dist)
 {
-  myTransfer.txObj(dist, sizeof(dist));
+  myTransfer.txObj(dist);
   myTransfer.sendData(dist);
 }

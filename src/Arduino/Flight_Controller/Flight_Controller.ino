@@ -56,8 +56,8 @@ void loop()
   pitchStab.writeMicroseconds(constrain(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 600, 2400) + 40, 1000, 2000));
   rollStab.writeMicroseconds(mapfloat(IFC.telemetry.rollAngle, -90, 90, 600, 2400) + 50);
 
-  if (anim)
-    animateCam();
+  /*if (anim)
+    animateCam();*/
 }
 
 
