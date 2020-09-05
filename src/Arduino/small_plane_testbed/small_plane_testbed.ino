@@ -66,7 +66,7 @@ void loop()
   Serial.print("SOG: "); Serial.println(plane.sog, 10);
   Serial.print("COG: "); Serial.println(plane.cog, 10);
   Serial.print("Azm: "); Serial.println(azimuth);
-  Serial.print("Val: "); Serial.println(validFlags, BIN);
+  Serial.print("VaF: "); Serial.println(validFlags, BIN);
   Serial.print("CAI: "); Serial.println(courseAngleIMU);
   Serial.print("PiA: "); Serial.println(plane.pitch);
   Serial.print("RoA: "); Serial.println(plane.roll);

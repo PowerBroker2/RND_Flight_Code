@@ -16,6 +16,7 @@ FireTimer lossGPSTimer;
 
 #define GPS_PORT Serial1
 #define LOSS_GPS_TIMEOUT 1000
+#define GPS_DEFAULT_PORT_BAUD 38400
 #define GPS_PORT_BAUD 115200
 #define GPS_REFRESH 10
 #define GPGGA_ENABLED 0
@@ -271,7 +272,7 @@ void setSentence(char NMEA_num, bool enable)
 
 void setupGPS()
 {
-  GPS_PORT.begin(38400);
+  GPS_PORT.begin(GPS_DEFAULT_PORT_BAUD);
   
   lossGPSTimer.begin(LOSS_GPS_TIMEOUT);
   
@@ -299,7 +300,7 @@ void setupGPS()
 
   changeFreq(GPS_REFRESH);
 
-  if (GPS_PORT_BAUD != 38400)
+  if (GPS_PORT_BAUD != GPS_DEFAULT_PORT_BAUD)
     changeBaud(GPS_PORT_BAUD);
 }
 
