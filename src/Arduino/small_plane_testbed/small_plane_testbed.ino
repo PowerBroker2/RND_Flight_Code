@@ -7,7 +7,7 @@
 #include "IMU.h"
 #include "Pitot.h"
 #include "AutopilotControls.h"
-//#include "datalog.h"
+#include "datalog.h"
 
 
 
@@ -35,7 +35,7 @@ void setup()
   setupInterrupts();
   setupControllers();
   setupPitot();
-  //setupSD();
+  setupSD();
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -53,7 +53,7 @@ void loop()
   pollPitot();
   
   handleControllers();
-  //handleSD();
+  handleSD();
 
   currentMicros = micros();
   loopFreq = 1000000.0 / (currentMicros - lastMicros);

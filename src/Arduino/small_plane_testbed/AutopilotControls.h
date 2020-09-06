@@ -1,14 +1,15 @@
 #pragma once
 #include "Arduino.h"
 #include "Autopilot.h"
+#include "Controls.h"
 
 
 
 
-uint16_t throttle_command = 1023 * 0.90;
-float pitch_command = 512;
-float roll_command  = 512;
-float yaw_command   = 512;
+uint16_t throttle_command = MS_LOW;
+float pitch_command = MS_MID;
+float roll_command  = MS_MID;
+float yaw_command   = MS_MID;
 
 
 
@@ -20,8 +21,8 @@ control_params pitchParams{
   0,    // ki
   0,    // kd
   10,   // sampleRate
-  1023, // outputMax
-  0     // ms pulswidth
+  MS_HIGH, // outputMax
+  MS_LOW   // ms pulswidth
 };
 
 roll_controller rollController;
@@ -31,41 +32,41 @@ control_params rollParams{
   0,    // ki
   10,   // kd
   10,   // sampleRate
-  1023, // outputMax
-  0     // ms pulswidth
+  MS_HIGH, // outputMax
+  MS_LOW   // outputMin
 };
 
 heading_controller headingController;
 control_params headingParams{
-  40,   // setpoint
+  0,    // setpoint
   2,    // kp
   0,    // ki
   0,    // kd
   10,   // sampleRate
-  35,   // outputMax
-  -35   // outputMin
+  ANGL_HIGH, // outputMax
+  ANGL_LOW   // outputMin
 };
 
 altitude_controller altitudeController;
 control_params altitudeParams{
-  1000, // setpoint
+  100,  // setpoint
   0.1,  // kp
   0,    // ki
   0,    // kd
   10,   // sampleRate
-  15,   // outputMax
-  -15   // outputMin
+  ANGL_HIGH, // outputMax
+  ANGL_LOW   // outputMin
 };
 
 ias_controller iasController;
 control_params iasParams{
-  350,  // setpoint
+  40,   // setpoint
   10,   // kp
   0,    // ki
   0,    // kd
   10,   // sampleRate
-  1023, // outputMax
-  0     // outputMin
+  MS_HIGH, // outputMax
+  MS_LOW   // outputMin
 };
 
 state_params plane;
@@ -90,6 +91,11 @@ struct inputs{
 
 
 
+bool engageAP = false;
+
+
+
+
 void setupControllers()
 {
   pitchController.begin(pitchParams);
@@ -104,29 +110,39 @@ void setupControllers()
 
 void handleControllers()
 {
-  float temp_pitch_command = pitchController.compute(plane);
-  if(pitchController.status)
-    pitch_command = temp_pitch_command;
-
-  float temp_roll_command  = rollController.compute(plane);
-  if(rollController.status)
-    roll_command = temp_roll_command;
-
-  float temp_heading_command  = -headingController.compute(plane);
-  if(headingController.status)
-    rollController.setpoint = temp_heading_command;
-
-  float temp_altitude_command  = -altitudeController.compute(plane);
-  if(altitudeController.status)
-    pitchController.setpoint = temp_altitude_command;
-
-  float temp_ias_command  = iasController.compute(plane);
-  if(iasController.status)
-    throttle_command = temp_ias_command;
-
-  setpoints.pitch = -pitchController.setpoint;
-  setpoints.roll  = -rollController.setpoint;
-  setpoints.hdg   = headingController.setpoint;
-  setpoints.alt   = altitudeController.setpoint;
-  setpoints.ias   = iasController.setpoint;
+  if(engageAP)
+  {
+    float temp_pitch_command = pitchController.compute(plane);
+    if(pitchController.status)
+      pitch_command = temp_pitch_command;
+  
+    float temp_roll_command  = rollController.compute(plane);
+    if(rollController.status)
+      roll_command = temp_roll_command;
+  
+    float temp_heading_command  = -headingController.compute(plane);
+    if(headingController.status)
+      rollController.setpoint = temp_heading_command;
+  
+    float temp_altitude_command  = -altitudeController.compute(plane);
+    if(altitudeController.status)
+      pitchController.setpoint = temp_altitude_command;
+  
+    float temp_ias_command  = iasController.compute(plane);
+    if(iasController.status)
+      throttle_command = temp_ias_command;
+  
+    setpoints.pitch = -pitchController.setpoint;
+    setpoints.roll  = -rollController.setpoint;
+    setpoints.hdg   = headingController.setpoint;
+    setpoints.alt   = altitudeController.setpoint;
+    setpoints.ias   = iasController.setpoint;
+  }
+  else
+  {
+    pitchServo.writeMicroseconds(pitchPulseLen);
+    rollServo.writeMicroseconds(rollPulseLen);
+    yawServo.writeMicroseconds(yawPulseLen);
+    throttleServo.writeMicroseconds(throttlePulseLen);
+  }
 }

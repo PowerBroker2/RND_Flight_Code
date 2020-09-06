@@ -1,21 +1,29 @@
 #pragma once
 #include "Arduino.h"
-#include "SdFat.h"
-#include "SdTerminal.h"
+#include "SD.h"
+//#include "SdFat.h"
+//#include "SdTerminal.h"
 
 
 
 
-SdFatSdioEX sd;
-Terminal myTerminal;
+//SdFatSdioEX sd;
+//Terminal myTerminal;
 
 
 
 
 void setupSD()
 {
-  sd.begin();
-  myTerminal.begin(sd);
+  if (!SD.begin(BUILTIN_SDCARD))
+    Serial.println ("NO LUCK");
+  else
+    Serial.println ("SD WORKS!");
+    
+  //sd.begin();
+  //myTerminal.begin(sd);
+
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
 }
 
 
@@ -23,5 +31,5 @@ void setupSD()
 
 void handleSD()
 {
-  myTerminal.handleCmds();
+  //myTerminal.handleCmds();
 }

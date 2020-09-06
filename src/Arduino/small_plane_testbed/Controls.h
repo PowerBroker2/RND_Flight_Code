@@ -7,6 +7,7 @@
 
 
 const int MS_HIGH   = 2000;
+const int MS_MID    = 1500;
 const int MS_LOW    = 1000;
 const int ANGL_HIGH = 30;
 const int ANGL_LOW  = -30;
@@ -14,34 +15,42 @@ const int ANGL_LOW  = -30;
 volatile long I1_StartMicros = 0;
 volatile long I1_PulseLen    = 0;
 volatile bool I1_NewPulse    = 0;
+volatile bool I1_HIGH        = 0;
 
 volatile long I2_StartMicros = 0;
 volatile long I2_PulseLen    = 0;
 volatile bool I2_NewPulse    = 0;
+volatile bool I2_HIGH        = 0;
 
 volatile long I3_StartMicros = 0;
 volatile long I3_PulseLen    = 0;
 volatile bool I3_NewPulse    = 0;
+volatile bool I3_HIGH        = 0;
 
 volatile long I4_StartMicros = 0;
 volatile long I4_PulseLen    = 0;
 volatile bool I4_NewPulse    = 0;
+volatile bool I4_HIGH        = 0;
 
 volatile long I5_StartMicros = 0;
 volatile long I5_PulseLen    = 0;
 volatile bool I5_NewPulse    = 0;
+volatile bool I5_HIGH        = 0;
 
 volatile long I6_StartMicros = 0;
 volatile long I6_PulseLen    = 0;
 volatile bool I6_NewPulse    = 0;
+volatile bool I6_HIGH        = 0;
 
 volatile long I7_StartMicros = 0;
 volatile long I7_PulseLen    = 0;
 volatile bool I7_NewPulse    = 0;
+volatile bool I7_HIGH        = 0;
 
 volatile long I8_StartMicros = 0;
 volatile long I8_PulseLen    = 0;
 volatile bool I8_NewPulse    = 0;
+volatile bool I8_HIGH        = 0;
 
 const int PITCH_SERVO_PIN    = O7;
 const int PITCH_INPUT_PIN    = I3;
@@ -61,6 +70,11 @@ float yawSetpoint            = 0;
 const int THROTTLE_SERVO_PIN = O6;
 const int THROTTLE_INPUT_PIN = I2;
 long throttlePulseLen        = 0;
+
+const int AP_INPUT_PIN = I5;
+long apPulseLen        = 0;
+
+extern bool engageAP;
 
 
 
@@ -154,6 +168,15 @@ void pollControls()
   {
     throttleServo.write(throttlePulseLen);
   }
+
+  if(handleInput(AP_INPUT_PIN, apPulseLen) > MS_MID)
+  {
+    engageAP = true;
+  }
+  else
+  {
+    engageAP = false;
+  }
 }
 
 
@@ -161,7 +184,9 @@ void pollControls()
 
 void I1_ISR()
 {
-  if(digitalRead(I1))
+  I1_HIGH = digitalRead(I1);
+  
+  if(I1_HIGH)
   {
     I1_StartMicros = micros();
     I1_NewPulse = false;
@@ -178,7 +203,9 @@ void I1_ISR()
 
 void I2_ISR()
 {
-  if(digitalRead(I2))
+  I2_HIGH = digitalRead(I2);
+  
+  if(I2_HIGH)
   {
     I2_StartMicros = micros();
     I2_NewPulse = false;
@@ -195,7 +222,9 @@ void I2_ISR()
 
 void I3_ISR()
 {
-  if(digitalRead(I3))
+  I3_HIGH = digitalRead(I3);
+  
+  if(I3_HIGH)
   {
     I3_StartMicros = micros();
     I3_NewPulse = false;
@@ -212,7 +241,9 @@ void I3_ISR()
 
 void I4_ISR()
 {
-  if(digitalRead(I4))
+  I4_HIGH = digitalRead(I4);
+  
+  if(I4_HIGH)
   {
     I4_StartMicros = micros();
     I4_NewPulse = false;
@@ -229,7 +260,9 @@ void I4_ISR()
 
 void I5_ISR()
 {
-  if(digitalRead(I5))
+  I5_HIGH = digitalRead(I5);
+  
+  if(I5_HIGH)
   {
     I5_StartMicros = micros();
     I5_NewPulse = false;
@@ -246,7 +279,9 @@ void I5_ISR()
 
 void I6_ISR()
 {
-  if(digitalRead(I6))
+  I6_HIGH = digitalRead(I6);
+  
+  if(I6_HIGH)
   {
     I6_StartMicros = micros();
     I6_NewPulse = false;
@@ -263,7 +298,9 @@ void I6_ISR()
 
 void I7_ISR()
 {
-  if(digitalRead(I7))
+  I7_HIGH = digitalRead(I7);
+  
+  if(I7_HIGH)
   {
     I7_StartMicros = micros();
     I7_NewPulse = false;
@@ -280,7 +317,9 @@ void I7_ISR()
 
 void I8_ISR()
 {
-  if(digitalRead(I8))
+  I8_HIGH = digitalRead(I8);
+  
+  if(I8_HIGH)
   {
     I8_StartMicros = micros();
     I8_NewPulse = false;
