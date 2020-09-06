@@ -29,3 +29,17 @@
 
 
 int validFlags;
+
+unsigned long currentMicros;
+unsigned long lastMicros;
+float loopFreq;
+
+
+
+
+void findLoopFreq()
+{
+  currentMicros = micros();
+  loopFreq = 1000000.0 / (currentMicros - lastMicros);
+  lastMicros = currentMicros;
+}

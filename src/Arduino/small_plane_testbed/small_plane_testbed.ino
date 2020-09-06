@@ -12,14 +12,7 @@
 
 
 
-#define DEBUG 0
-
-
-
-
-unsigned long currentMicros;
-unsigned long lastMicros;
-float loopFreq;
+#define DEBUG 1
 
 
 
@@ -55,9 +48,7 @@ void loop()
   handleControllers();
   handleSD();
 
-  currentMicros = micros();
-  loopFreq = 1000000.0 / (currentMicros - lastMicros);
-  lastMicros = currentMicros;
+  findLoopFreq();
 
 #if DEBUG
   Serial.print("Loop Frequency: "); Serial.println(loopFreq);
