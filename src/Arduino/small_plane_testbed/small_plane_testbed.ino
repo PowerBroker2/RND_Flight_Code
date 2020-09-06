@@ -12,7 +12,8 @@
 
 
 
-#define DEBUG 1
+#define DEBUG_MONITOR 1
+#define DEBUG_PLOTTER 0
 
 
 
@@ -32,6 +33,25 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
+
+#if DEBUG_MONITOR
+#elif DEBUG_PLOTTER
+  Serial.println("Loop Frequency: "
+                 "Lat: "
+                 "Lon: "
+                 "SOG: "
+                 "COG: "
+                 "Azm: "
+                 "VaF: "
+                 "CAI: "
+                 "PiA: "
+                 "RoA: "
+                 "PPL: "
+                 "RPL: "
+                 "YPL: "
+                 "TPL: "
+                 "IAS: ");
+#endif
 }
 
 
@@ -50,7 +70,7 @@ void loop()
 
   findLoopFreq();
 
-#if DEBUG
+#if DEBUG_MONITOR
   Serial.print("Loop Frequency: "); Serial.println(loopFreq);
   Serial.print("Lat: "); Serial.println(plane.lat, 10);
   Serial.print("Lon: "); Serial.println(plane.lon, 10);
@@ -67,5 +87,22 @@ void loop()
   Serial.print("TPL: "); Serial.println(throttlePulseLen);
   Serial.print("IAS: "); Serial.println(plane.ias);
   Serial.println();
+  
+#elif DEBUG_PLOTTER
+  Serial.print(loopFreq);         Serial.print(',');
+  Serial.print(plane.lat, 10);    Serial.print(',');
+  Serial.print(plane.lon, 10);    Serial.print(',');
+  Serial.print(plane.sog, 10);    Serial.print(',');
+  Serial.print(plane.cog, 10);    Serial.print(',');
+  Serial.print(azimuth);          Serial.print(',');
+  Serial.print(validFlags, BIN);  Serial.print(',');
+  Serial.print(courseAngleIMU);   Serial.print(',');
+  Serial.print(plane.pitch);      Serial.print(',');
+  Serial.print(plane.roll);       Serial.print(',');
+  Serial.print(pitchPulseLen);    Serial.print(',');
+  Serial.print(rollPulseLen);     Serial.print(',');
+  Serial.print(yawPulseLen);      Serial.print(',');
+  Serial.print(throttlePulseLen); Serial.print(',');
+  Serial.println(plane.ias);
 #endif
 }
