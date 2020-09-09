@@ -110,7 +110,7 @@ void setupControllers()
 
 void handleControllers()
 {
-  if(engageAP)
+  if(engageAP && (validFlags & IMU_RECENT) && (validFlags & IMU_VALID) && (validFlags & FIX_RECENT) && (validFlags & FIX_VALID))
   {
     float temp_pitch_command = pitchController.compute(plane);
     if(pitchController.status)

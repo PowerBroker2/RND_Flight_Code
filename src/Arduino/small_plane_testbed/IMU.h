@@ -20,10 +20,10 @@ void setupIMU()
 {
   imuTimer.begin(LIMITER_PERIOD);
 
-  if (!bno.begin())
+  while (!bno.begin())
   {
-    Serial.print("No BNO055 detected");
-    while (1);
+    Serial.println("No BNO055 detected");
+    delay(100);
   }
 }
 
@@ -34,10 +34,24 @@ void pollIMU()
 {
   //get IMU data and convert to degrees
   auto vect = bno.getQuat().toEuler();
-  courseAngleIMU  = vect.x() * (180 / M_PI);
-  plane.pitch     = vect.z() * (180 / M_PI);
-  plane.roll      = vect.y() * (180 / M_PI);
+  courseAngleIMU  = -vect.x() * (180 / M_PI);
+  plane.pitch     =  vect.y() * (180 / M_PI);
+  plane.roll      = -vect.z() * (180 / M_PI);
 
-  //timestamp the new data - regardless of where this function was called
-  imuTimer.start();
+  if(courseAngleIMU < 0)
+    courseAngleIMU = courseAngleIMU + 360;
+
+  if(isnan(courseAngleIMU) || isnan(plane.pitch) || isnan(plane.roll))
+  {
+    validFlags &= ~(byte)IMU_VALID;
+
+    if(imuTimer.fire(false))
+      validFlags &= ~(byte)IMU_RECENT;
+  }
+  else
+  {
+    imuTimer.start();
+    validFlags |= IMU_VALID;
+    validFlags |= IMU_RECENT;
+  }
 }

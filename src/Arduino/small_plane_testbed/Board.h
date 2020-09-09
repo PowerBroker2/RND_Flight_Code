@@ -25,10 +25,17 @@
 
 #define PITOT A0
 
+#define IMU_RECENT B100000
+#define IMU_VALID   B10000
+#define FIX_RECENT   B1000
+#define FIX_VALID     B100
+#define LINK_RECENT    B10
+#define MANUAL_CONTROL  B1
 
 
 
-int validFlags;
+
+uint8_t validFlags = MANUAL_CONTROL;
 
 unsigned long currentMicros;
 unsigned long lastMicros;

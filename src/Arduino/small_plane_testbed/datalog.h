@@ -11,7 +11,7 @@
 
 const char nameTemplate[] = "flight_%d.csv";
 const char headerRow[] = "epoch_ms,"
-                         "alt_cm,"
+                         "alt_m,"
                          "course_angle_imu,"
                          "roll_deg,"
                          "pitch_deg,"
@@ -19,12 +19,6 @@ const char headerRow[] = "epoch_ms,"
                          "valid_flags,"
                          "lat_dd,"
                          "lon_dd,"
-                         "year,"
-                         "month,"
-                         "day,"
-                         "hour,"
-                         "min,"
-                         "sec,"
                          "sog,"
                          "cog,"
                          "throttle_command,"
@@ -82,7 +76,6 @@ void setupSD()
   if(useSD)
   {
     setupLog();
-      
     //myTerminal.begin(sd);
   }
 }
@@ -95,10 +88,10 @@ void logData()
   if (!sd.exists(filename))
     setupLog();
 
-  auto myFile = sd.open(filename, FILE_WRITE);
+  auto myFile = sd.open(filename, O_WRITE | O_APPEND);
   
   myFile.print(millis());           myFile.print(',');
-  myFile.print(plane.alt);          myFile.print(',');
+  myFile.print(plane.alt, 10);      myFile.print(',');
   myFile.print(courseAngleIMU, 10); myFile.print(',');
   myFile.print(plane.roll, 10);     myFile.print(',');
   myFile.print(plane.pitch, 10);    myFile.print(',');
@@ -106,12 +99,6 @@ void logData()
   myFile.print(validFlags, BIN);    myFile.print(',');
   myFile.print(plane.lat, 10);      myFile.print(',');
   myFile.print(plane.lon, 10);      myFile.print(',');
-  myFile.print(plane.UTC_year);     myFile.print(',');
-  myFile.print(plane.UTC_month);    myFile.print(',');
-  myFile.print(plane.UTC_day);      myFile.print(',');
-  myFile.print(plane.UTC_hour);     myFile.print(',');
-  myFile.print(plane.UTC_minute);   myFile.print(',');
-  myFile.print(plane.UTC_second);   myFile.print(',');
   myFile.print(plane.sog, 10);      myFile.print(',');
   myFile.print(plane.cog, 10);      myFile.print(',');
   myFile.print(throttlePulseLen);   myFile.print(',');

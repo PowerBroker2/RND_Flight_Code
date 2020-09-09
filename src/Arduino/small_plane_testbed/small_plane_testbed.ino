@@ -12,7 +12,7 @@
 
 
 
-#define DEBUG_MONITOR 1
+#define DEBUG_MONITOR 0
 #define DEBUG_PLOTTER 0
 
 
@@ -37,6 +37,7 @@ void setup()
 #if DEBUG_MONITOR
 #elif DEBUG_PLOTTER
   Serial.println("Loop Frequency: "
+                 "EAP: "
                  "Lat: "
                  "Lon: "
                  "SOG: "
@@ -72,6 +73,8 @@ void loop()
 
 #if DEBUG_MONITOR
   Serial.print("Loop Frequency: "); Serial.println(loopFreq);
+  Serial.print("EAP: "); Serial.println(engageAP);
+  Serial.print("Alt: "); Serial.println(plane.alt, 10);
   Serial.print("Lat: "); Serial.println(plane.lat, 10);
   Serial.print("Lon: "); Serial.println(plane.lon, 10);
   Serial.print("SOG: "); Serial.println(plane.sog, 10);
@@ -90,6 +93,7 @@ void loop()
   
 #elif DEBUG_PLOTTER
   Serial.print(loopFreq);         Serial.print(',');
+  Serial.print(engageAP);         Serial.print(',');
   Serial.print(plane.lat, 10);    Serial.print(',');
   Serial.print(plane.lon, 10);    Serial.print(',');
   Serial.print(plane.sog, 10);    Serial.print(',');

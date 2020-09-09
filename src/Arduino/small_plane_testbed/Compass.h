@@ -23,8 +23,8 @@ void setupCompass()
 
 
 
-int pollCompass()
+void pollCompass()
 {
   compass.read();
-  return compass.getAzimuth();
+  azimuth = compass.getAzimuth();
 }

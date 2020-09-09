@@ -71,7 +71,7 @@ const int THROTTLE_SERVO_PIN = O6;
 const int THROTTLE_INPUT_PIN = I2;
 long throttlePulseLen        = 0;
 
-const int AP_INPUT_PIN = I5;
+const int AP_INPUT_PIN = I7;
 long apPulseLen        = 0;
 
 extern bool engageAP;
@@ -169,13 +169,18 @@ void pollControls()
     throttleServo.write(throttlePulseLen);
   }
 
-  if(handleInput(AP_INPUT_PIN, apPulseLen) > MS_MID)
+  if(handleInput(AP_INPUT_PIN, apPulseLen))
   {
-    engageAP = true;
-  }
-  else
-  {
-    engageAP = false;
+    if(apPulseLen > MS_MID)
+    {
+      validFlags &= ~(byte)MANUAL_CONTROL;
+      engageAP = true;
+    }
+    else
+    {
+      validFlags |= MANUAL_CONTROL;
+      engageAP = false;
+    }
   }
 }
 

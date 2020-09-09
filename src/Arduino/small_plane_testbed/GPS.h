@@ -18,13 +18,18 @@ FireTimer lossGPSTimer;
 #define LOSS_GPS_TIMEOUT 1000
 #define GPS_DEFAULT_PORT_BAUD 38400
 #define GPS_PORT_BAUD 115200
-#define GPS_REFRESH 10
-#define GPGGA_ENABLED 0
+#define GPS_REFRESH   10
+#define GPGGA_ENABLED 1
 #define GPGLL_ENABLED 0
-#define GPGLV_ENABLED 0
+#define GPGSV_ENABLED 0
 #define GPGSA_ENABLED 0
 #define GPRMC_ENABLED 1
 #define GPVTG_ENABLED 0
+#define GNGRS_ENABLED 0
+#define GNGST_ENABLED 0
+#define GNZDA_ENABLED 0
+#define GNGBS_ENABLED 0
+#define GNDTM_ENABLED 0
 
 #define NMEA_LEN 16
 #define FREQ_LEN 14
@@ -32,10 +37,15 @@ FireTimer lossGPSTimer;
 
 #define GPGGA 0
 #define GPGLL 1
-#define GPGLV 2
-#define GPGSA 3
+#define GPGSA 2
+#define GPGSV 3
 #define GPRMC 4
 #define GPVTG 5
+#define GNGRS 6
+#define GNGST 7
+#define GNZDA 8
+#define GNGBS 9
+#define GNDTM 10
 
 #define NMEA_ID_POS  7
 #define DDC_POS      8
@@ -163,15 +173,15 @@ void readGPSData()
       plane.lon = fix.longitude();
 
       //record that fix data is valid
-      validFlags = validFlags | 0x6;
+      validFlags |= FIX_VALID;
     }
     else
     {
-      plane.lat  = 0;
+      plane.lat = 0;
       plane.lon = 0;
 
       //record that fix data is not valid
-      validFlags = validFlags & ~(byte)0x6;
+      validFlags &= ~(byte)FIX_VALID;
     }
 
     if (fix.valid.date)
@@ -209,6 +219,11 @@ void readGPSData()
       plane.cog = fix.heading();
     else
       plane.cog = 0;
+
+    if(fix.valid.altitude)
+      plane.alt = fix.altitude();
+    else
+      plane.alt = 0;
   }
 }
 
@@ -241,7 +256,7 @@ void changeBaud(uint32_t baud)
   configPacket[BAUD_2] = (char)((baud >> 16) & 0xFF);
   configPacket[BAUD_3] = (char)((baud >> 24) & 0xFF);
 
-  insertChecksum(configPacket,     BAUD_LEN);
+  insertChecksum(configPacket, BAUD_LEN);
   GPS_PORT.write(configPacket, BAUD_LEN);
 
   delay(100);
@@ -279,24 +294,39 @@ void setupGPS()
   //disable all NMEA sentences first
   setSentence(GPGGA, false);
   setSentence(GPGLL, false);
-  setSentence(GPGLV, false);
   setSentence(GPGSA, false);
+  setSentence(GPGSV, false);
   setSentence(GPRMC, false);
   setSentence(GPVTG, false);
+  setSentence(GNGRS, false);
+  setSentence(GNGST, false);
+  setSentence(GNZDA, false);
+  setSentence(GNGBS, false);
+  setSentence(GNDTM, false);
 
   //then select the ones you want
   if (GPGGA_ENABLED)
     setSentence(GPGGA, true);
   if (GPGLL_ENABLED)
     setSentence(GPGLL, true);
-  if (GPGLV_ENABLED)
-    setSentence(GPGLV, true);
+  if (GPGSV_ENABLED)
+    setSentence(GPGSV, true);
   if (GPGSA_ENABLED)
     setSentence(GPGSA, true);
   if (GPRMC_ENABLED)
     setSentence(GPRMC, true);
   if (GPVTG_ENABLED)
     setSentence(GPVTG, true);
+  if (GNGRS_ENABLED)
+    setSentence(GNGRS, true);
+  if (GNGST_ENABLED)
+    setSentence(GNGST, true);
+  if (GNZDA_ENABLED)
+    setSentence(GNZDA, true);
+  if (GNGBS_ENABLED)
+    setSentence(GNGBS, true);
+  if (GNDTM_ENABLED)
+    setSentence(GNDTM, true);
 
   changeFreq(GPS_REFRESH);
 
@@ -312,7 +342,7 @@ bool gpsFailover()
   if (lossGPSTimer.fire(false))
   {
     gpsConnected = false;
-    validFlags = validFlags & ~(byte)0x8;
+    validFlags &= ~(byte)FIX_RECENT;
   }
 
   return gpsConnected;
@@ -330,7 +360,7 @@ bool pollGPS()
 
     lossGPSTimer.start();
     gpsConnected = true;
-    validFlags = validFlags | 0x8;
+    validFlags |= FIX_RECENT;
   }
 
   return gpsFailover();
