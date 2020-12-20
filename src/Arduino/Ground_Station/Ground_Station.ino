@@ -7,14 +7,15 @@
 
 
 GS_Class GS;
+SerialTransfer rpiTransfer;
 
 
 
 
 void setup()
 {
-  Serial.begin(115200);
   GS.begin();
+  rpiTransfer.begin(GS_DEBUG_PORT);
   
   setupRS485();
   setupInterrupts();
@@ -35,5 +36,19 @@ void loop()
     GS.controlInputs.yaw_command      = I1_PulseLen;
     GS.controlInputs.throttle_command = I3_PulseLen;
     GS.sendCommands();
+  }
+
+  if (GS.telemTimer.fire() && USE_GS_TELEM)
+  {
+    uint16_t sendLen = rpiTransfer.txObj(GS.telemetry);
+    sendLen += rpiTransfer.txObj(GS.controlInputs, sendLen);
+    sendLen += rpiTransfer.txObj(GS.linkConnected, sendLen);
+
+    rpiTransfer.sendData(sendLen);
+  }
+
+  if (rpiTransfer.available())
+  {
+    //Do something
   }
 }
