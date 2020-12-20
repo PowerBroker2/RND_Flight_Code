@@ -3,22 +3,36 @@
 
 
 
-const uint16_t TELEM_REPORT_PERIOD_MS = 20;
-const int16_t  NWLG_OFFSET            = -100;
+#define S0 22
+#define S1 23
+#define S2 40
+#define S3 41
+
+#define S4 2
+#define S5 3
+#define S6 4
+#define S7 5
+
+#define S8 6
+#define S9 9
+#define S10 30
+#define S11 31
+
+#define S12 32
+#define S13 33
+#define S14 36
+#define S15 37
 
 
 
 
-FireTimer camAnim;
 IFC_Class IFC;
 
-Servo nwlg;
+Servo nose;
 Servo rollStab;
 Servo pitchStab;
 Servo pan;
 Servo tilt;
-
-bool anim = true;
 
 
 
@@ -26,20 +40,17 @@ bool anim = true;
 void setup()
 {
   IFC.begin();
-
-  camAnim.begin(10);
   
-  nwlg.attach(29);
-  rollStab.attach(28);
-  pitchStab.attach(27);
-  pan.attach(25);
-  tilt.attach(26);
+  nose.attach(S4);
+  rollStab.attach(S12);
+  pitchStab.attach(S13);
+  pan.attach(S14);
+  tilt.attach(S15);
 
-  nwlg.write(90);
-  pitchStab.write(90);
-  rollStab.write(90);
-  pan.write(90);
-  tilt.write(90);
+  IFC.controlInputs.pitch_command    = 1500;
+  IFC.controlInputs.roll_command     = 1500;
+  IFC.controlInputs.yaw_command      = 1500;
+  IFC.controlInputs.throttle_command = 1500;
 }
 
 
@@ -52,50 +63,9 @@ void loop()
   if (IFC.linkConnected)
     IFC.updateServos();
   
-  nwlg.writeMicroseconds(constrain(map(IFC.controlInputs.yaw_command, RUDDER_MIN, RUDDER_MAX, RUDDER_MAX, RUDDER_MIN) + NWLG_OFFSET, RUDDER_MIN, RUDDER_MAX));
-  pitchStab.writeMicroseconds(constrain(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 600, 2400) + 40, 1000, 2000));
-  rollStab.writeMicroseconds(mapfloat(IFC.telemetry.rollAngle, -90, 90, 600, 2400) + 50);
-
-  /*if (anim)
-    animateCam();*/
-}
-
-
-
-
-void animateCam()
-{
-  static uint16_t panPos = 1000;
-  static uint16_t tiltPos = 1000;
-  static bool dir = true;
-
-  if (camAnim.fire())
-  {
-    if (dir)
-    {
-      if ((panPos <= 2000) && (tiltPos <= 2000))
-      {
-        pan.writeMicroseconds(panPos);
-        tilt.writeMicroseconds(tiltPos);
-    
-        panPos++;
-        tiltPos++;
-      }
-      else
-        dir = false;
-    }
-    else
-    {
-      if ((panPos >= 1500) && (tiltPos >= 1500))
-      {
-        pan.writeMicroseconds(panPos);
-        tilt.writeMicroseconds(tiltPos);
-    
-        panPos--;
-        tiltPos--;
-      }
-      else
-        anim = false;
-    }
-  }
+  nose.writeMicroseconds(IFC.controlInputs.yaw_command);
+  rollStab.writeMicroseconds(mapfloat(-IFC.telemetry.rollAngle, -90, 90, 500, 2500));
+  pitchStab.writeMicroseconds(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 500, 2500));
+  pan.writeMicroseconds(1500);
+  tilt.writeMicroseconds(1800);
 }

@@ -169,8 +169,14 @@ void readGPSData()
   {
     if (fix.valid.location)
     {
+      plane.prev_lat = plane.lat;
+      plane.prev_lon = plane.lon;
+      
       plane.lat = fix.latitude();
       plane.lon = fix.longitude();
+
+      plane.cog_gps_calc = find_heading(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon);
+      plane.ias_gps_calc = find_distance(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon) / (3600000.0 / lossGPSTimer.timeDiff); // convert ms to hr
 
       //record that fix data is valid
       validFlags |= FIX_VALID;
@@ -180,7 +186,10 @@ void readGPSData()
       plane.lat = 0;
       plane.lon = 0;
 
-      //record that fix data is not valid
+      plane.cog_gps_calc = 0;
+      plane.ias_gps_calc = 0;
+
+      // record that fix data is not valid
       validFlags &= ~(byte)FIX_VALID;
     }
 
@@ -211,19 +220,19 @@ void readGPSData()
     }
 
     if (fix.valid.speed)
-      plane.sog = fix.speed_kph();
+      plane.ias_gps = fix.speed_kph();
     else
-      plane.sog = 0;
+      plane.ias_gps = 0;
 
     if (fix.valid.heading)
-      plane.cog = fix.heading();
+      plane.cog_gps = fix.heading();
     else
-      plane.cog = 0;
+      plane.cog_gps = 0;
 
     if(fix.valid.altitude)
-      plane.alt = fix.altitude();
+      plane.alt_gps = fix.altitude();
     else
-      plane.alt = 0;
+      plane.alt_gps = 0;
   }
 }
 

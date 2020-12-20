@@ -11,11 +11,6 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 
 
-float courseAngleIMU;
-
-
-
-
 void setupIMU()
 {
   imuTimer.begin(LIMITER_PERIOD);
@@ -34,14 +29,14 @@ void pollIMU()
 {
   //get IMU data and convert to degrees
   auto vect = bno.getQuat().toEuler();
-  courseAngleIMU  = -vect.x() * (180 / M_PI);
-  plane.pitch     =  vect.y() * (180 / M_PI);
-  plane.roll      = -vect.z() * (180 / M_PI);
+  plane.hdg_imu = -vect.x() * (180 / M_PI);
+  plane.pitch   =  vect.y() * (180 / M_PI);
+  plane.roll    = -vect.z() * (180 / M_PI);
 
-  if(courseAngleIMU < 0)
-    courseAngleIMU = courseAngleIMU + 360;
+  if(plane.hdg_imu < 0)
+    plane.hdg_imu = plane.hdg_imu + 360;
 
-  if(isnan(courseAngleIMU) || isnan(plane.pitch) || isnan(plane.roll))
+  if(isnan(plane.hdg_imu) || isnan(plane.pitch) || isnan(plane.roll))
   {
     validFlags &= ~(byte)IMU_VALID;
 

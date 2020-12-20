@@ -71,15 +71,6 @@ control_params iasParams{
 
 state_params plane;
 
-struct extra_params{
-  float useWaypoints = 0;
-  float nextLat      = 0;
-  float nextLon      = 0;
-  float nextHdg      = 0;
-  float nextAlt      = 0;
-  float nextIAS      = 0;
-} extraParams;
-
 struct inputs{
   float pitch = 0;
   float roll  = 0;

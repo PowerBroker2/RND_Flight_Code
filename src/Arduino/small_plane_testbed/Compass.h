@@ -1,16 +1,12 @@
 #pragma once
 #include "Arduino.h"
 #include <QMC5883LCompass.h>
+#include "AutopilotControls.h"
 
 
 
 
 QMC5883LCompass compass;
-
-
-
-
-float azimuth;
 
 
 
@@ -26,5 +22,5 @@ void setupCompass()
 void pollCompass()
 {
   compass.read();
-  azimuth = compass.getAzimuth();
+  plane.hdg_comp = compass.getAzimuth();
 }
