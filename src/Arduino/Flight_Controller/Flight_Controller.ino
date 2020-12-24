@@ -27,6 +27,9 @@
 #define MUX_S0 39
 #define MUX_S1 26
 
+#define CAM_1 0
+#define CAM_2 1
+
 
 
 
@@ -56,13 +59,8 @@ void setup()
   IFC.controlInputs.yaw_command      = 1500;
   IFC.controlInputs.throttle_command = 1500;
 
-  pinMode(MUX_EN, OUTPUT);
-  pinMode(MUX_S0, OUTPUT);
-  pinMode(MUX_S1, OUTPUT);
-
-  digitalWrite(MUX_EN, LOW);
-  digitalWrite(MUX_S0, LOW);
-  digitalWrite(MUX_S1, LOW);
+  setupMux();
+  setChannel(CAM_1);
 }
 
 
@@ -82,4 +80,33 @@ void loop()
   tilt.writeMicroseconds(1800);
   
   IFC.sendTelem();
+}
+
+
+
+
+void setupMux()
+{
+  pinMode(MUX_EN, OUTPUT);
+  pinMode(MUX_S0, OUTPUT);
+  pinMode(MUX_S1, OUTPUT);
+}
+
+
+
+
+void setChannel(uint8_t channelNum)
+{
+  enableMux(true);
+  
+  digitalWrite(MUX_S0, bitRead(channelNum, 0));
+  digitalWrite(MUX_S1, bitRead(channelNum, 1));
+}
+
+
+
+
+void enableMux(bool enable)
+{
+  digitalWrite(MUX_EN, !enable);
 }
