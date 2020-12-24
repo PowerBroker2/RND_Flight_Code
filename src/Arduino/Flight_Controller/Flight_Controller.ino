@@ -23,6 +23,10 @@
 #define S14 36
 #define S15 37
 
+#define MUX_EN 27
+#define MUX_S0 39
+#define MUX_S1 26
+
 
 
 
@@ -51,6 +55,14 @@ void setup()
   IFC.controlInputs.roll_command     = 1500;
   IFC.controlInputs.yaw_command      = 1500;
   IFC.controlInputs.throttle_command = 1500;
+
+  pinMode(MUX_EN, OUTPUT);
+  pinMode(MUX_S0, OUTPUT);
+  pinMode(MUX_S1, OUTPUT);
+
+  digitalWrite(MUX_EN, LOW);
+  digitalWrite(MUX_S0, LOW);
+  digitalWrite(MUX_S1, LOW);
 }
 
 
