@@ -6,6 +6,7 @@ from pySerialTransfer import pySerialTransfer as txfer
 
 
 ARDUINO_PORT = r'/dev/ttyACM0'
+BYTE_FORMAT = '<'
 INPUTS = ['ABS_HAT0X',
           'ABS_HAT0Y',
           'ABS_RX',
@@ -68,13 +69,13 @@ if __name__ == '__main__':
     try:
         mixer.init()
         
-        play_mp3(mixer, 14)
+        #play_mp3(mixer, 14)
         
         link = txfer.SerialTransfer(ARDUINO_PORT)
         link.open()
         
         while True:
-            try:
+            '''try:
                 events = get_gamepad()
                 
                 if not controller_connected:
@@ -89,39 +90,70 @@ if __name__ == '__main__':
             except UnpluggedError:
                 if controller_connected:
                     controller_connected = False
-                    play_mp3(mixer, 16)
+                    play_mp3(mixer, 16)'''
             
             if link.available():
                 if link.idByte == 0:
-                    altitude         = link.rxBuff[1] + (link.rxBuff[0] << 8)
-                    courseAngleIMU   = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=2))
-                    rollAngle        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=6))
-                    pitchAngle       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=10))
-                    pitotPressure    = link.rxBuff[16] + (link.rxBuff[15] << 8)
-                    validFlags       = link.rxBuff[17]
-                    latitude         = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=18))
-                    longitude        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=22))
-                    UTC_year         = link.rxBuff[27] + (link.rxBuff[26] << 8)
-                    UTC_month        = link.rxBuff[28]
-                    UTC_day          = link.rxBuff[29]
-                    UTC_hour         = link.rxBuff[30]
-                    UTC_minute       = link.rxBuff[31]
-                    UTC_second       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=32))
-                    speedOverGround  = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=36))
-                    courseOverGround = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=40))
+                    altitude         = link.rxBuff[0] + (link.rxBuff[1] << 8)
+                    courseAngleIMU   = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=2, byte_format=BYTE_FORMAT))
+                    rollAngle        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=6, byte_format=BYTE_FORMAT))
+                    pitchAngle       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=10, byte_format=BYTE_FORMAT))
+                    pitotPressure    = link.rxBuff[14] + (link.rxBuff[15] << 8)
+                    validFlags       = link.rxBuff[16]
+                    latitude         = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=17, byte_format=BYTE_FORMAT))
+                    longitude        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=21, byte_format=BYTE_FORMAT))
+                    UTC_year         = link.rxBuff[25] + (link.rxBuff[26] << 8)
+                    UTC_month        = link.rxBuff[27]
+                    UTC_day          = link.rxBuff[28]
+                    UTC_hour         = link.rxBuff[29]
+                    UTC_minute       = link.rxBuff[30]
+                    UTC_second       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=31, byte_format=BYTE_FORMAT))
+                    speedOverGround  = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=35, byte_format=BYTE_FORMAT))
+                    courseOverGround = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=39, byte_format=BYTE_FORMAT))
 
-                    limiter_enable        = bool(link.rxBuff[41])
-                    manual_control_enable = bool(link.rxBuff[42])
-                    pitch_command         = link.rxBuff[44] + (link.rxBuff[43] << 8)
-                    roll_command          = link.rxBuff[46] + (link.rxBuff[45] << 8)
-                    yaw_command           = link.rxBuff[48] + (link.rxBuff[47] << 8)
-                    throttle_command      = link.rxBuff[50] + (link.rxBuff[49] << 8)
-                    autopilot_command     = link.rxBuff[52] + (link.rxBuff[51] << 8)
-                    limiter_command       = link.rxBuff[54] + (link.rxBuff[53] << 8)
-                    gear_command          = link.rxBuff[56] + (link.rxBuff[55] << 8)
-                    flaps_command         = link.rxBuff[58] + (link.rxBuff[57] << 8)
+                    limiter_enable        = bool(link.rxBuff[43])
+                    manual_control_enable = bool(link.rxBuff[44])
+                    pitch_command         = link.rxBuff[45] + (link.rxBuff[46] << 8)
+                    roll_command          = link.rxBuff[47] + (link.rxBuff[48] << 8)
+                    yaw_command           = link.rxBuff[49] + (link.rxBuff[50] << 8)
+                    throttle_command      = link.rxBuff[51] + (link.rxBuff[52] << 8)
+                    autopilot_command     = link.rxBuff[53] + (link.rxBuff[54] << 8)
+                    limiter_command       = link.rxBuff[55] + (link.rxBuff[56] << 8)
+                    gear_command          = link.rxBuff[57] + (link.rxBuff[58] << 8)
+                    flaps_command         = link.rxBuff[59] + (link.rxBuff[60] << 8)
 
-                    linkConnected = bool(link.rxBuff[59])
+                    linkConnected = bool(link.rxBuff[61])
+                    
+                    print('altitude {}'.format(altitude))
+                    print('courseAngleIMU {}'.format(courseAngleIMU))
+                    print('rollAngle {}'.format(rollAngle))
+                    print('pitchAngle {}'.format(pitchAngle))
+                    print('pitotPressure {}'.format(pitotPressure))
+                    print('validFlags {}'.format(validFlags))
+                    print('latitude {}'.format(latitude))
+                    print('longitude {}'.format(longitude))
+                    print('UTC_year {}'.format(UTC_year))
+                    print('UTC_month {}'.format(UTC_month))
+                    print('UTC_day {}'.format(UTC_day))
+                    print('UTC_hour {}'.format(UTC_hour))
+                    print('UTC_minute {}'.format(UTC_minute))
+                    print('UTC_second {}'.format(UTC_second))
+                    print('speedOverGround {}'.format(speedOverGround))
+                    print('courseOverGround {}'.format(courseOverGround))
+
+                    print('limiter_enable {}'.format(limiter_enable))
+                    print('manual_control_enable {}'.format(manual_control_enable))
+                    print('pitch_command {}'.format(pitch_command))
+                    print('roll_command {}'.format(roll_command))
+                    print('yaw_command {}'.format(yaw_command))
+                    print('throttle_command {}'.format(throttle_command))
+                    print('autopilot_command {}'.format(autopilot_command))
+                    print('limiter_command {}'.format(limiter_command))
+                    print('gear_command {}'.format(gear_command))
+                    print('flaps_command {}'.format(flaps_command))
+
+                    print('linkConnected {}'.format(linkConnected))
+                    print('')
                 
                 elif link.idByte == 1:
                     voice_command  = link.rx_obj(obj_type=int,
@@ -152,3 +184,4 @@ if __name__ == '__main__':
             link.close()
         except:
             pass
+
