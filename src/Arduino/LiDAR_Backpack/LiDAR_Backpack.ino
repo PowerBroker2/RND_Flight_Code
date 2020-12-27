@@ -6,6 +6,9 @@ LIDARLite myLidarLite;
 SerialTransfer myTransfer;
 
 
+const uint8_t DELAY = 10;
+
+
 void setup()
 {
   Serial.begin(115200);
@@ -18,15 +21,12 @@ void setup()
 
 void loop()
 {
-  sendDistance(myLidarLite.distance());
+  myTransfer.sendDatum((uint16_t)myLidarLite.distance());
+  delay(DELAY);
   
   for(int i = 0; i < 99; i++)
-    sendDistance(myLidarLite.distance(false));
-}
-
-
-void sendDistance(const float &dist)
-{
-  myTransfer.txObj(dist);
-  myTransfer.sendData(dist);
+  {
+   myTransfer.sendDatum((uint16_t)myLidarLite.distance(false));
+   delay(DELAY);
+  }
 }
