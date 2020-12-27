@@ -78,8 +78,6 @@ void loop()
   pitchStab.writeMicroseconds(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 500, 2500));
   pan.writeMicroseconds(1500);
   tilt.writeMicroseconds(1800);
-  
-  IFC.sendTelem();
 }
 
 
