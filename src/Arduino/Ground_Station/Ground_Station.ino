@@ -38,14 +38,8 @@ void loop()
     GS.sendCommands();
   }
 
-  if (GS.telemTimer.fire() && USE_GS_TELEM)
-  {
-    uint16_t sendLen = rpiTransfer.txObj(GS.telemetry);
-    sendLen += rpiTransfer.txObj(GS.controlInputs, sendLen);
-    sendLen += rpiTransfer.txObj(GS.linkConnected, sendLen);
-
-    rpiTransfer.sendData(sendLen);
-  }
+  while(RS485_2.available())
+    Serial.write(RS485_2.read());
 
   if (rpiTransfer.available())
   {
