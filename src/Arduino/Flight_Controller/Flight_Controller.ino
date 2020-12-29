@@ -44,6 +44,17 @@ Servo tilt;
 
 
 
+struct __attribute__((__packed__)) extra_channels_struct
+{
+  uint16_t ec1;
+  uint16_t ec2;
+  uint16_t ec3;
+  uint16_t ec4;
+} extraChannels;
+
+
+
+
 void setup()
 {
   IFC.begin();
@@ -78,6 +89,21 @@ void loop()
   pitchStab.writeMicroseconds(mapfloat(-IFC.telemetry.pitchAngle, -90, 90, 500, 2500));
   pan.writeMicroseconds(1500);
   tilt.writeMicroseconds(1800);
+  
+  hndlExtChannels();
+}
+
+
+
+
+void hndlExtChannels()
+{
+  IFC.commandTransfer.rxObj(extraChannels, sizeof(IFC.controlInputs));
+
+  if (extraChannels.ec1 > 1500)
+    setChannel(1);
+  else
+    setChannel(0);
 }
 
 
