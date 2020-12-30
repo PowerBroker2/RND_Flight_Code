@@ -5,6 +5,26 @@
 
 
 
+// Uncomment 'USE_EXTERNAL_SD' define to use an external SD card adapter or leave
+// it commented to use the built in sd card.
+//#define USE_EXTERNAL_SD 
+
+#ifdef USE_EXTERNAL_SD
+const uint8_t SD_CS_PIN = SS;
+#define SPI_CLOCK SD_SCK_MHZ(10)
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SPI_CLOCK)
+#else // Use built in SD card
+
+#ifdef SDCARD_SS_PIN
+const uint8_t SD_CS_PIN = SDCARD_SS_PIN;
+#endif // SDCARD_SS_PIN
+#define SPI_CLOCK SD_SCK_MHZ(50)
+#define SD_CONFIG SdioConfig(FIFO_SDIO)
+#endif // USE_EXTERNAL_SD
+
+
+
+
 const char nameTemplate[] = "flight_%d.txt";
 const char headerRow[] = "epoch_ms,alt_cm,course_angle_imu,roll_deg,pitch_deg,pitot_pressure,valid_flags,lat_dd,lon_dd,year,month,day,hour,min,sec,sog,cog,throttle_command,pitch_command,yaw_command,roll_command";
 char target[] = "%d,%d,%s,%s,%s,%d,%d,%s,%s,%d,%d,%d,%d,%d,%s,%s,%s,%d,%d,%d,%d";
@@ -16,8 +36,8 @@ telemetry_struct telemetry;
 control_inputs_struct controlInputs;
 
 SerialTransfer telemTransfer;
-SdFatSdioEX sd;
-SdFile myFile;
+SdFs sd;
+FsFile myFile;
 Terminal myTerminal;
 
 char filename[20];
@@ -32,7 +52,7 @@ void setup()
   digitalWrite(13, HIGH);
 
   Serial.begin(115200);
-  Serial1.begin(2000000);
+  Serial1.begin(115200);
 
   telemTransfer.begin(Serial1);
   
@@ -58,7 +78,7 @@ void setupLog()
 {
   unsigned int flightCount = 1;
 
-  while (!sd.begin())
+  while (!sd.begin(SD_CONFIG))
   {
     Serial.println(F("SD iniatialization failed"));
     delay(100);
