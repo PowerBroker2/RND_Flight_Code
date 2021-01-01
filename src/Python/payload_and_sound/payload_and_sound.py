@@ -3,11 +3,10 @@ import json
 import random
 import string
 from time import sleep
-from queue import Queue
-from threading import Thread 
+from threading import Thread
 from pygame import mixer
-from inputs import get_gamepad, UnpluggedError
-from flask import Flask, flash, request, redirect, render_template, send_from_directory
+from inputs import devices, get_gamepad, UnpluggedError
+from flask import Flask, render_template
 from pySerialTransfer import pySerialTransfer as txfer
 
 
@@ -16,7 +15,7 @@ app.secret_key = ''.join(random.choice(string.printable) for i in range(1023))
 app.config['MAX_CONTENT_LENGTH'] = 1000 * 1024 * 1024 # 1 GB file max
 
 
-ARDUINO_PORT = 'COM3'#r'/dev/ttyACM0'
+ARDUINO_PORT = r'/dev/ttyACM0'
 BYTE_FORMAT = '<'
 INPUTS = ['ABS_HAT0X',
           'ABS_HAT0Y',
@@ -35,45 +34,51 @@ INPUTS = ['ABS_HAT0X',
           'BTN_TR',
           'BTN_WEST']
 
-controller_connected = False
 data = {}
+link = txfer.SerialTransfer(ARDUINO_PORT)
 
 
-def play_mp3(self, mixer, voice_command):
+def play_mp3(mixer, voice_command):
     mp3_path = r'mp3/{}.mp3'.format(voice_command)
                     
     if os.path.exists(mp3_path):
         mixer.music.load('mp3/{}.mp3'.format(voice_command))
         mixer.music.play()
 
-def getData():
-    global data
-    global controller_connected
-    mixer.init()
-    
-    #play_mp3(mixer, 14)
-    
-    link = txfer.SerialTransfer(ARDUINO_PORT)
-    link.open()
+def handleGamepad():
+    sleep(3)
+    controller_connected = False
     
     while True:
-        '''try:
-            events = get_gamepad()
-            
-            if not controller_connected:
+        try:
+            if devices.gamepads and not controller_connected:
                 controller_connected = True
                 play_mp3(mixer, 15)
+                
+            elif not devices.gamepads and controller_connected:
+                controller_connected = False
+                play_mp3(mixer, 16)
+            
+            events = get_gamepad()
         
             for event in events:
                 if event.code in INPUTS:
                     send_size = link.tx_obj(int(event.state))
                     link.send(send_size, INPUTS.index(event.code))
                     sleep(0.002)
+            
         except UnpluggedError:
             if controller_connected:
                 controller_connected = False
-                play_mp3(mixer, 16)'''
-        
+                play_mp3(mixer, 16)
+
+def getData():
+    global data
+    mixer.init()
+    
+    play_mp3(mixer, 14)
+    
+    while True:
         if link.available():
             if link.idByte == 0:
                 altitude         = link.rxBuff[0] + (link.rxBuff[1] << 8)
@@ -139,7 +144,14 @@ def indicator_data():
 
 
 if __name__ == '__main__':
-    th = Thread(target=getData)
-    th.start()
+    link.open()
+    
+    th1 = Thread(target=getData)
+    th1.start()
+    th2 = Thread(target=handleGamepad)
+    th2.start()
+    
     app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False, threaded=True)
-    th.join()
+    
+    th1.join()
+    th2.join()
