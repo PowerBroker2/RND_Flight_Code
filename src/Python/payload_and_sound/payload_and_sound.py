@@ -7,7 +7,6 @@ from pySerialTransfer import pySerialTransfer as txfer
 
 
 ARDUINO_PORT = r'/dev/ttyACM0'
-BYTE_FORMAT = '<'
 controller_connected = False
 
 
@@ -33,40 +32,40 @@ def getData(link):
     
     if link.available():
         if link.idByte == 0:
-            altitude         = link.rxBuff[0] + (link.rxBuff[1] << 8)
-            courseAngleIMU   = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=2, byte_format=BYTE_FORMAT))
-            rollAngle        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=6, byte_format=BYTE_FORMAT))
-            pitchAngle       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=10, byte_format=BYTE_FORMAT))
-            pitotPressure    = link.rxBuff[14] + (link.rxBuff[15] << 8)
-            validFlags       = link.rxBuff[16]
-            latitude         = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=17, byte_format=BYTE_FORMAT))
-            longitude        = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=21, byte_format=BYTE_FORMAT))
-            UTC_year         = link.rxBuff[25] + (link.rxBuff[26] << 8)
-            UTC_month        = link.rxBuff[27]
-            UTC_day          = link.rxBuff[28]
-            UTC_hour         = link.rxBuff[29]
-            UTC_minute       = link.rxBuff[30]
-            UTC_second       = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=31, byte_format=BYTE_FORMAT))
-            speedOverGround  = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=35, byte_format=BYTE_FORMAT))
-            courseOverGround = float(link.rx_obj(obj_type=float, obj_byte_size=4, start_pos=39, byte_format=BYTE_FORMAT))
+            altitude         = link.rx_obj('H',   0)
+            courseAngleIMU   = link.rx_obj(float, 2)
+            rollAngle        = link.rx_obj(float, 6)
+            pitchAngle       = link.rx_obj(float, 10)
+            pitotPressure    = link.rx_obj('H',   14)
+            validFlags       = link.rx_obj('c',   16)
+            latitude         = link.rx_obj(float, 17)
+            longitude        = link.rx_obj(float, 21)
+            UTC_year         = link.rx_obj('H',   25)
+            UTC_month        = link.rx_obj('c',   27)
+            UTC_day          = link.rx_obj('c',   28)
+            UTC_hour         = link.rx_obj('c',   29)
+            UTC_minute       = link.rx_obj('c',   30)
+            UTC_second       = link.rx_obj(float, 31)
+            speedOverGround  = link.rx_obj(float, 35)
+            courseOverGround = link.rx_obj(float, 39)
 
-            limiter_enable        = bool(link.rxBuff[43])
-            manual_control_enable = bool(link.rxBuff[44])
-            pitch_command         = link.rxBuff[45] + (link.rxBuff[46] << 8)
-            roll_command          = link.rxBuff[47] + (link.rxBuff[48] << 8)
-            yaw_command           = link.rxBuff[49] + (link.rxBuff[50] << 8)
-            throttle_command      = link.rxBuff[51] + (link.rxBuff[52] << 8)
-            autopilot_command     = link.rxBuff[53] + (link.rxBuff[54] << 8)
-            limiter_command       = link.rxBuff[55] + (link.rxBuff[56] << 8)
-            gear_command          = link.rxBuff[57] + (link.rxBuff[58] << 8)
-            flaps_command         = link.rxBuff[59] + (link.rxBuff[60] << 8)
+            limiter_enable        = link.rx_obj('?', 43)
+            manual_control_enable = link.rx_obj('?', 44)
+            pitch_command         = link.rx_obj('H', 45)
+            roll_command          = link.rx_obj('H', 47)
+            yaw_command           = link.rx_obj('H', 49)
+            throttle_command      = link.rx_obj('H', 51)
+            autopilot_command     = link.rx_obj('H', 53)
+            limiter_command       = link.rx_obj('H', 55)
+            gear_command          = link.rx_obj('H', 57)
+            flaps_command         = link.rx_obj('H', 59)
 
-            linkConnected = bool(link.rxBuff[61])
+            linkConnected = link.rx_obj('?', 61)
             
-            data['roll'] = rollAngle
-            data['pitch'] = pitchAngle
-            data['heading'] = courseAngleIMU
-            data['vario'] = -2
+            data['roll']     = rollAngle
+            data['pitch']    = pitchAngle
+            data['heading']  = courseAngleIMU
+            data['vario']    = -2
             data['airspeed'] = speedOverGround
             data['altitude'] = altitude
             
