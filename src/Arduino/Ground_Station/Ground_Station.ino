@@ -43,7 +43,7 @@ void loop()
   if (GS.commandTimer.fire())
   {
     GS.controlInputs.yaw_command      = I1_PulseLen;
-    GS.controlInputs.pitch_command    = I2_PulseLen;
+    GS.controlInputs.pitch_command    = reverse(I2_PulseLen);
     GS.controlInputs.throttle_command = I3_PulseLen;
     GS.controlInputs.roll_command     = I4_PulseLen;
     
