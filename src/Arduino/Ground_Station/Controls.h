@@ -53,6 +53,14 @@ volatile bool I8_HIGH        = 0;
 
 
 
+uint16_t reverse(uint16_t input)
+{
+  return constrain(map(input, 1000, 2000, 2000, 1000), 1000, 2000);
+}
+
+
+
+
 void I1_ISR()
 {
   I1_HIGH = digitalRead(I1);
