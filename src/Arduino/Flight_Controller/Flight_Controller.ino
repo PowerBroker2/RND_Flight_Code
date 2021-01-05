@@ -40,6 +40,8 @@ Servo rollStab;
 Servo pitchStab;
 Servo pan;
 Servo tilt;
+Servo cam2tilt;
+Servo cam2pan;
 
 
 
@@ -64,6 +66,8 @@ void setup()
   pitchStab.attach(S13);
   pan.attach(S14);
   tilt.attach(S15);
+  cam2tilt.attach(S9);
+  cam2pan.attach(S10);
 
   IFC.controlInputs.pitch_command    = 1500;
   IFC.controlInputs.roll_command     = 1500;
@@ -89,6 +93,8 @@ void loop()
   pitchStab.writeMicroseconds(mapfloat(IFC.telemetry.pitchAngle, -90, 90, 500, 2500));
   pan.writeMicroseconds(1500);
   tilt.writeMicroseconds(1800);
+  cam2tilt.writeMicroseconds(mapfloat(IFC.telemetry.pitchAngle, -90, 90, 500, 2500));
+  cam2pan.writeMicroseconds(IFC.controlInputs.yaw_command);
   
   hndlExtChannels();
 }
