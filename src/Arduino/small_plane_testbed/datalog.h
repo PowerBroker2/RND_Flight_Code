@@ -1,10 +1,30 @@
 #pragma once
 #include "Arduino.h"
-#include "SdFat.h" // SdFat.h Ver 2.0.0 Beta
-//#include "SdTerminal.h"
+#include "SdFat.h"
+#include "SdTerminal.h"
 #include "IMU.h"
 #include "Controls.h"
 #include "Board.h"
+
+
+
+
+// Uncomment 'USE_EXTERNAL_SD' define to use an external SD card adapter or leave
+// it commented to use the built in sd card.
+//#define USE_EXTERNAL_SD 
+
+#ifdef USE_EXTERNAL_SD
+const uint8_t SD_CS_PIN = SS;
+#define SPI_CLOCK SD_SCK_MHZ(10)
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SPI_CLOCK)
+#else // Use built in SD card
+
+#ifdef SDCARD_SS_PIN
+const uint8_t SD_CS_PIN = SDCARD_SS_PIN;
+#endif // SDCARD_SS_PIN
+#define SPI_CLOCK SD_SCK_MHZ(50)
+#define SD_CONFIG SdioConfig(FIFO_SDIO)
+#endif // USE_EXTERNAL_SD
 
 
 
@@ -32,9 +52,9 @@ const char headerRow[] = "Loop_Frequency,"
 
 
 
-SdExFat sd;
-ExFile myFile;
-//Terminal myTerminal;
+SdFs sd;
+FsFile myFile;
+Terminal myTerminal;
 
 
 
@@ -50,7 +70,7 @@ void setupLog()
 {
   unsigned int flightCount = 1;
   
-  if(!sd.begin(SdioConfig(FIFO_SDIO)))
+  if(!sd.begin(SD_CONFIG))
   {
     useSD = false;
     Serial.println(F("SD iniatialization failed"));
@@ -82,7 +102,7 @@ void setupSD()
   if(useSD)
   {
     setupLog();
-    //myTerminal.begin(sd);
+    myTerminal.begin(sd);
   }
 }
 
@@ -208,6 +228,6 @@ void handleSD()
   if(useSD)
   {
     logData();
-    //myTerminal.handleCmds();
+    myTerminal.handleCmds();
   }
 }

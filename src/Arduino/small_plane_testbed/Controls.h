@@ -53,7 +53,7 @@ volatile bool I8_NewPulse    = 0;
 volatile bool I8_HIGH        = 0;
 
 const int PITCH_SERVO_PIN    = O7;
-const int PITCH_INPUT_PIN    = I3;
+const int PITCH_INPUT_PIN    = I2;
 long pitchPulseLen           = 0;
 float pitchSetpoint          = 0;
 
@@ -68,7 +68,7 @@ long yawPulseLen             = 0;
 float yawSetpoint            = 0;
 
 const int THROTTLE_SERVO_PIN = O6;
-const int THROTTLE_INPUT_PIN = I2;
+const int THROTTLE_INPUT_PIN = I3;
 long throttlePulseLen        = 0;
 
 const int AP_INPUT_PIN = I7;
