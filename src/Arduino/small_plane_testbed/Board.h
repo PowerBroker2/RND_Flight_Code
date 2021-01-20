@@ -3,6 +3,9 @@
 
 
 
+#define GPS_PORT Serial1
+#define RAD_PORT Serial2
+
 #define I1 2
 #define I2 3
 #define I3 4

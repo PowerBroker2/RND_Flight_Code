@@ -14,7 +14,6 @@ FireTimer lossGPSTimer;
 
 
 
-#define GPS_PORT Serial1
 #define LOSS_GPS_TIMEOUT 1000
 #define GPS_DEFAULT_PORT_BAUD 38400
 #define GPS_PORT_BAUD 115200

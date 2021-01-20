@@ -1,5 +1,3 @@
-#include "FireTimer.h"
-#include "Autopilot.h"
 #include "Board.h"
 #include "Compass.h"
 #include "Controls.h"
@@ -7,6 +5,7 @@
 #include "IMU.h"
 #include "Pitot.h"
 #include "AutopilotControls.h"
+#include "Radio.h"
 #include "datalog.h"
 
 
@@ -29,6 +28,7 @@ void setup()
   setupInterrupts();
   setupControllers();
   setupPitot();
+  setupRadio();
   setupSD();
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -62,6 +62,8 @@ void setup()
 
 void loop()
 {
+  findLoopFreq();
+  
   pollCompass();
   pollGPS();
   pollIMU();
@@ -71,7 +73,7 @@ void loop()
   handleControllers();
   handleSD();
 
-  findLoopFreq();
+  sendTelem();
 
 #if DEBUG_MONITOR
   Serial.print("Loop Frequency: "); Serial.println(loopFreq);
