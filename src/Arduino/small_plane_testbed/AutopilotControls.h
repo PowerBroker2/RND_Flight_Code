@@ -135,5 +135,6 @@ void handleControllers()
     rollServo.writeMicroseconds(rollPulseLen);
     yawServo.writeMicroseconds(yawPulseLen);
     throttleServo.writeMicroseconds(throttlePulseLen);
+    camServo.writeMicroseconds(camPulseLen);
   }
 }

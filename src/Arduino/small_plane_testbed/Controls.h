@@ -71,10 +71,14 @@ const int THROTTLE_SERVO_PIN = O6;
 const int THROTTLE_INPUT_PIN = I3;
 long throttlePulseLen        = 0;
 
-const int AP_INPUT_PIN = I7;
+const int AP_INPUT_PIN = I5;
 long apPulseLen        = 0;
 
 extern bool engageAP;
+
+const int CAM_SERVO_PIN = O4;
+const int CAM_INPUT_PIN = I6;
+long camPulseLen        = 0;
 
 
 
@@ -83,6 +87,8 @@ Servo pitchServo;
 Servo rollServo;
 Servo yawServo;
 Servo throttleServo;
+
+Servo camServo;
 
 
 
@@ -93,6 +99,7 @@ void setupServos()
   rollServo.attach(ROLL_SERVO_PIN);
   yawServo.attach(YAW_SERVO_PIN);
   throttleServo.attach(THROTTLE_SERVO_PIN);
+  camServo.attach(CAM_SERVO_PIN);
 }
 
 
@@ -182,6 +189,8 @@ void pollControls()
       engageAP = false;
     }
   }
+
+  handleInput(CAM_INPUT_PIN, camPulseLen);
 }
 
 
