@@ -53,7 +53,6 @@ void loop()
     extraChannels.ec4 = I8_PulseLen;
 
     GS.commandTransfer.txObj(extraChannels, sizeof(GS.controlInputs));
-    
     GS.sendCommands();
   }
 
