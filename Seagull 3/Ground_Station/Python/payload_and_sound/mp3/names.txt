@@ -1,0 +1,20 @@
+https://ttsmp3.com/
+Salli
+
+0  - autopilot engaged
+1  - gimbal controller connected
+2  - gimbal controller disconnected
+3  - manual control engaged
+4  - telemetry link connected
+5  - telemetry link lost
+6  - trim down
+7  - trim left
+8  - trim right
+9  - trim up
+10 - warning low airspeed
+11 - warning low altitude
+12 - warning max pitch exceeded
+13 - warning max roll exceeded
+14 - Welcome to ArdUAV
+15 - Controller connected
+16 - Controller disconnected
