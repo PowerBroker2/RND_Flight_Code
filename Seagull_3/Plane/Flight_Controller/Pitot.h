@@ -5,25 +5,32 @@
 
 const int PITOT_PIN = S6;
 
+const float RHO           = 1.2041; // Density of air at sea level and 20°C
+const int OFFSET_SIZE     = 10;
+const int VELOC_MEAN_SIZE = 10;
+const int ZERO_SPAN       = 2;
+const float ADC_MAX       = (float)(pow(2.0, ADC_RESOLUTION) - 1.0);
+const float ADC_MID       = ADC_MAX / 2.0;
 
 
 
-float V_0           = 3.3;   // supply voltage to the pressure sensor
-float rho           = 1.204; // density of air
-int offset          = 0;
-int offset_size     = 10;
-int veloc_mean_size = 20;
-int zero_span       = 2;
+
+int offset = 0;
 
 
 
 
 void setupPitot()
 {
-  for (int i = 0; i < offset_size; i++)
-    offset += analogRead(PITOT_PIN) - (65535 / 2);
+  int reading;
+  
+  for (int i = 0; i < OFFSET_SIZE; i++)
+  {
+    reading = analogRead(PITOT_PIN);
+    offset += reading - ADC_MID;
+  }
 
-  offset /= offset_size;
+  offset /= OFFSET_SIZE;
 }
 
 
@@ -34,24 +41,16 @@ void pollPitot()
   float adc_avg = 0;
   float veloc   = 0;
 
-  // average a few ADC readings for stability
-  for (int i = 0; i < veloc_mean_size; i++)
+  for (int i = 0; i < VELOC_MEAN_SIZE; i++)
     adc_avg += analogRead(PITOT_PIN) - offset;
   
-  adc_avg /= veloc_mean_size;
+  adc_avg /= VELOC_MEAN_SIZE;
 
-  // make sure if the ADC reads below 512, then we equate it to a negative velocity
-  if ((adc_avg > (512 - zero_span)) && (adc_avg < (512 + zero_span)))
+  if ((adc_avg > (ADC_MID + ZERO_SPAN)) || (adc_avg < (ADC_MID - ZERO_SPAN)))
   {
-    
-  }
-  else
-  {
-    if (adc_avg < 512)
-      veloc = -sqrt((-10000.0 * ((adc_avg / 65535.0) - 0.5)) / rho);
+    if (adc_avg < ADC_MID)
+      veloc = -sqrt((-10000.0 * ((adc_avg / ADC_MAX) - 0.5)) / RHO);
     else
-      veloc = sqrt((10000.0 * ((adc_avg / 65535.0) - 0.5)) / rho);
-
-    Serial.println(veloc);
+      veloc =  sqrt(( 10000.0 * ((adc_avg / ADC_MAX) - 0.5)) / RHO);
   }
 }

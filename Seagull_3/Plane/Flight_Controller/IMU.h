@@ -8,18 +8,22 @@
 
 #define IMU_PORT Wire
 
-#define COMPASS_RAD  vect.x()
+#define COMPASS_RAD  vect.z()
 #define PITCH_RAD    vect.y()
-#define ROLL_RAD     vect.z()
+#define ROLL_RAD     vect.x()
 
 
 
 
 const int IMU_PERIOD = 20; // ms
 
-const int FLIP_COMPASS = 0;
-const int FLIP_PITCH   = 0;
-const int FLIP_ROLL    = 0;
+const bool REVERSE_COMPASS = false;
+const bool REVERSE_PITCH   = false;
+const bool REVERSE_ROLL    = false;
+
+const bool FLIP_COMPASS = false;
+const bool FLIP_PITCH   = false;
+const bool FLIP_ROLL    = true;
 
 
 
@@ -56,15 +60,37 @@ void pollIMU()
   telem.courseAngleIMU = COMPASS_RAD * (180 / M_PI);
   telem.pitchAngle     = PITCH_RAD   * (180 / M_PI);
   telem.rollAngle      = ROLL_RAD    * (180 / M_PI);
+  
 
-  if (FLIP_COMPASS)
+  if (isnan(telem.courseAngleIMU))
+    telem.courseAngleIMU = 0;
+
+  if (isnan(telem.pitchAngle))
+    telem.pitchAngle = 0;
+  
+  if (isnan(telem.rollAngle))
+    telem.rollAngle = 0;
+    
+
+  if (REVERSE_COMPASS)
     telem.courseAngleIMU *= -1;
 
-  if (FLIP_PITCH)
+  if (REVERSE_PITCH)
     telem.pitchAngle *= -1;
 
-  if (FLIP_ROLL)
+  if (REVERSE_ROLL)
     telem.rollAngle *= -1;
+    
+
+  if (FLIP_COMPASS)
+    telem.courseAngleIMU = fmod(telem.courseAngleIMU + 180, 360);
+
+  if (FLIP_PITCH)
+    telem.pitchAngle = fmod(telem.pitchAngle + 180, 360);
+
+  if (FLIP_ROLL)
+    telem.rollAngle = fmod(telem.rollAngle + 180 - 23, 360); // WTF
+    
 
   // Timestamp the new data - regardless of where this function was called
   imuTimer.start();

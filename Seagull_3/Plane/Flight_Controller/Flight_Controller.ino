@@ -5,6 +5,7 @@
 #include "IMU.h"
 #include "LiDAR.h"
 #include "Links.h"
+#include "Payloads.h"
 #include "Pitot.h"
 #include "Secondary.h"
 
@@ -19,6 +20,8 @@ void setup()
   setupIMU();
   setupLiDAR();
   setupLinks();
+  setupPayloads();
+  setupPitot();
   setupSecondary();
 }
 
@@ -33,6 +36,7 @@ void loop()
   pollLiDAR();
   pollC2();
   sendTelem();
+  handlePayloads();
   pollPitot();
   pollSecondary();
 }

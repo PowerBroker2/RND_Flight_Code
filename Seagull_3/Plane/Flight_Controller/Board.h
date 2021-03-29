@@ -11,6 +11,8 @@
 
 const int DEBUG_BAUD = 115200;
 
+const int ADC_RESOLUTION = 16;
+
 const int MUX_S0 = 5;
 const int MUX_S1 = 4;
 const int MUX_S2 = 3;
@@ -111,7 +113,7 @@ void setupWatchDog()
 
 void setupBoard()
 {
-  analogReadResolution(16);
+  analogReadResolution(ADC_RESOLUTION);
   setupMux();
   setupPorts();
 }
