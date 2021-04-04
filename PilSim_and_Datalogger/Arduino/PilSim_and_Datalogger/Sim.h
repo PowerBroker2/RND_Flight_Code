@@ -1,7 +1,7 @@
 #pragma once
-
 #include "SerialTransfer.h"
 #include "Autopilot.h"
+#include "Log.h"
 
 
 
@@ -72,14 +72,6 @@ control_params iasParams{
 
 pilsim_state_params plane;
 
-struct inputs{
-  float pitch = 0;
-  float roll  = 0;
-  float hdg   = 0;
-  float alt   = 0;
-  float ias   = 0;
-} setpoints;
-
 SerialTransfer feedback;
 SerialTransfer datalog;
 
@@ -91,6 +83,14 @@ uint16_t throttle_command = JOY_MAX * 0.85;
 float pitch_command = 512;
 float roll_command  = 512;
 float yaw_command   = 512;
+
+float lat;
+float lon;
+float hdg;
+float alt;
+float ias;
+
+nav_state navState = DISENGAGED;
 
 
 
@@ -105,11 +105,12 @@ bool handleData()
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.pitch);
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.hdg);
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.alt);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lat);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lon);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.ias);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.flaps);
-    DEBUG_PORT.print(" "); DEBUG_PORT.println(plane.gear);
+    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lat);
+    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lon);
+    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.ias);
+    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.flaps);
+    //DEBUG_PORT.print(" "); DEBUG_PORT.println(plane.gear);
+    DEBUG_PORT.print(" "); DEBUG_PORT.print(distance(plane.lat, plane.lon, lat, lon, true));
     DEBUG_PORT.println();
 
     return true;
@@ -121,8 +122,75 @@ bool handleData()
 
 
 
+void readNextWp()
+{
+  lat = atof(wpFile[wpfRow][wpfCol]);
+  wpfCol++;
+  lon = atof(wpFile[wpfRow][wpfCol]);
+  wpfCol++;
+  hdg = atof(wpFile[wpfRow][wpfCol]);
+  wpfCol++;
+  alt = atof(wpFile[wpfRow][wpfCol]);
+  wpfCol++;
+  ias = atof(wpFile[wpfRow][wpfCol]);
+  wpfCol = 0;
+  wpfRow++;
+}
+
+
+
+
 void handleControllers()
 {
+  switch (navState)
+  {
+    case TAKEOFF:
+    {
+      static bool readWp = false;
+
+      if (!readWp)
+        readNextWp();
+      
+      if (distance(plane.lat, plane.lon, lat, lon) <= 15)
+      {
+        readWp = true;
+        navState = TURN_I;
+      }
+      
+      break;
+    }
+    
+    case TURN_I:
+    {
+      
+      break;
+    }
+    
+    case STRAIGHT:
+    {
+      
+      break;
+    }
+    
+    case TURN_F:
+    {
+      
+      break;
+    }
+    
+    case FINAL:
+    {
+      
+      break;
+    }
+    
+    case DISENGAGED:
+    {
+      
+      break;
+    }
+  }
+  
   float temp_pitch_command = pitchController.compute(plane);
   if(pitchController.status)
     pitch_command = temp_pitch_command;
@@ -142,12 +210,6 @@ void handleControllers()
   float temp_ias_command  = iasController.compute(plane);
   if(iasController.status)
     throttle_command = temp_ias_command;
-
-  setpoints.pitch = -pitchController.setpoint;
-  setpoints.roll  = -rollController.setpoint;
-  setpoints.hdg   = headingController.setpoint;
-  setpoints.alt   = altitudeController.setpoint;
-  setpoints.ias   = iasController.setpoint;
 }
 
 

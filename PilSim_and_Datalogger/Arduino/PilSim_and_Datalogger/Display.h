@@ -1,5 +1,4 @@
 #pragma once
-
 #include "LiquidCrystal_PCF8574.h"
 #include "OneButton.h"
 #include "RotaryEncoder.h"
