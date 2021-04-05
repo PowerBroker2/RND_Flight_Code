@@ -65,6 +65,7 @@ bool wpFileSelected;
 char wpFile[MAX_WP_ROWS][MAX_WP_COLS][MAX_VAL_LEN];
 int wpfRow;
 int wpfCol;
+int numCols;
 int numWpts;
 char filename[20];
 int dataIndex;
@@ -297,6 +298,7 @@ void loadWpFile(char* arr, int len)
       col++;
     }
 
+    numCols = col;
     col = 0;
     row++;
   }

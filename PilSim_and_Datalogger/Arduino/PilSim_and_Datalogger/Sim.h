@@ -101,7 +101,7 @@ bool handleData()
   {
     feedback.rxObj(plane);
     
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.roll);
+    /*DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.roll);
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.pitch);
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.hdg);
     DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.alt);
@@ -110,7 +110,7 @@ bool handleData()
     //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.ias);
     //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.flaps);
     //DEBUG_PORT.print(" "); DEBUG_PORT.println(plane.gear);
-    DEBUG_PORT.println();
+    DEBUG_PORT.println();*/
 
     return true;
   }
@@ -123,16 +123,24 @@ bool handleData()
 
 void readNextWp()
 {
-  lat = atof(wpFile[wpfRow][wpfCol]);
-  wpfCol++;
-  lon = atof(wpFile[wpfRow][wpfCol]);
-  wpfCol++;
-  hdg = atof(wpFile[wpfRow][wpfCol]);
-  wpfCol++;
-  alt = atof(wpFile[wpfRow][wpfCol]);
-  wpfCol++;
-  ias = atof(wpFile[wpfRow][wpfCol]);
   wpfCol = 0;
+  
+  while (wpfCol < numCols)
+  {
+    if (!strcmp(wpFile[0][wpfCol], "lat"))
+      lat = atof(wpFile[wpfRow][wpfCol]);
+    else if (!strcmp(wpFile[0][wpfCol], "lon"))
+      lon = atof(wpFile[wpfRow][wpfCol]);
+    else if (!strcmp(wpFile[0][wpfCol], "hdg"))
+      hdg = atof(wpFile[wpfRow][wpfCol]);
+    else if (!strcmp(wpFile[0][wpfCol], "alt"))
+      alt = atof(wpFile[wpfRow][wpfCol]);
+    else if (!strcmp(wpFile[0][wpfCol], "ias"))
+      ias = atof(wpFile[wpfRow][wpfCol]);
+    
+    wpfCol++;
+  }
+  
   wpfRow++;
 }
 
@@ -152,6 +160,36 @@ void handleControllers()
         readNextWp();
         readWp = false;
       }
+
+      pitchController.setpoint   = 15;
+      headingController.setpoint = heading(plane.lat, plane.lon, lat, lon);
+      iasController.setpoint     = ias;
+
+      float temp_pitch_command = -pitchController.compute(plane);
+      if(pitchController.status)
+        pitch_command = temp_pitch_command;
+    
+      float temp_heading_command  = -headingController.compute(plane);
+      if(headingController.status)
+        rollController.setpoint = temp_heading_command;
+
+      float temp_roll_command  = rollController.compute(plane);
+      if(rollController.status)
+        roll_command = temp_roll_command;
+    
+      float temp_ias_command  = iasController.compute(plane);
+      if(iasController.status)
+        throttle_command = temp_ias_command;
+
+      Serial.print("Pitch:\t\t\t"); Serial.println(plane.pitch);
+      Serial.print("Pitch setpoint:\t\t"); Serial.println(pitchController.setpoint);
+
+      Serial.print("Roll:\t\t\t"); Serial.println(plane.roll);
+      Serial.print("Roll setpoint:\t\t"); Serial.println(rollController.setpoint);
+      
+      Serial.print("Heading:\t\t"); Serial.println(plane.hdg);
+      Serial.print("Heading setpoint:\t"); Serial.println(headingController.setpoint);
+      Serial.println();
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
@@ -197,26 +235,6 @@ void handleControllers()
       break;
     }
   }
-  
-  float temp_pitch_command = pitchController.compute(plane);
-  if(pitchController.status)
-    pitch_command = temp_pitch_command;
-
-  float temp_roll_command  = rollController.compute(plane);
-  if(rollController.status)
-    roll_command = temp_roll_command;
-
-  float temp_heading_command  = -headingController.compute(plane);
-  if(headingController.status)
-    rollController.setpoint = temp_heading_command;
-
-  float temp_altitude_command  = -altitudeController.compute(plane);
-  if(altitudeController.status)
-    pitchController.setpoint = constrain(temp_altitude_command, -25, 90);
-
-  float temp_ias_command  = iasController.compute(plane);
-  if(iasController.status)
-    throttle_command = temp_ias_command;
 }
 
 
