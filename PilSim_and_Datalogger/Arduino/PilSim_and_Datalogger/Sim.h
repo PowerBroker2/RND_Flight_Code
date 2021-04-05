@@ -110,7 +110,6 @@ bool handleData()
     //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.ias);
     //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.flaps);
     //DEBUG_PORT.print(" "); DEBUG_PORT.println(plane.gear);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(distance(plane.lat, plane.lon, lat, lon, true));
     DEBUG_PORT.println();
 
     return true;
@@ -142,19 +141,22 @@ void readNextWp()
 
 void handleControllers()
 {
+  static bool readWp = true;
+  
   switch (navState)
   {
     case TAKEOFF:
     {
-      static bool readWp = false;
-
-      if (!readWp)
+      if (readWp)
+      {
         readNextWp();
+        readWp = false;
+      }
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
-        readWp = true;
         navState = TURN_I;
+        readWp = true;
       }
       
       break;
@@ -162,6 +164,11 @@ void handleControllers()
     
     case TURN_I:
     {
+      if (readWp)
+      {
+        readNextWp();
+        readWp = false;
+      }
       
       break;
     }
