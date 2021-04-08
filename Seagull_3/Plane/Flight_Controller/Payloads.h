@@ -26,6 +26,15 @@ const int TILT_MAX = 2500;
 const int TILT_MIN = 500;
 const int TILT_MID = (TILT_MAX + TILT_MIN) / 2;
 
+const bool REVERSE_PITCH_STAB = true;
+const bool REVERSE_ROLL_STAB  = false;
+
+
+
+
+int pitch_stab_offset = 100;
+int roll_stab_offset  = 0;
+
 
 
 
@@ -39,7 +48,10 @@ Servo tilt;
 
 void setPitchStab(const int& pWidth)
 {
-  pitchStab.writeMicroseconds(constrain(pWidth, PITCH_STAB_MIN, PITCH_STAB_MAX));
+  if (REVERSE_PITCH_STAB)
+    pitchStab.writeMicroseconds(map(constrain(pWidth + pitch_stab_offset, PITCH_STAB_MIN, PITCH_STAB_MAX), PITCH_STAB_MIN, PITCH_STAB_MAX, PITCH_STAB_MAX, PITCH_STAB_MIN));
+  else
+    pitchStab.writeMicroseconds(constrain(pWidth + pitch_stab_offset, PITCH_STAB_MIN, PITCH_STAB_MAX));
 }
 
 
@@ -47,7 +59,10 @@ void setPitchStab(const int& pWidth)
 
 void setRollStab(const int& pWidth)
 {
-  rollStab.writeMicroseconds(constrain(pWidth, ROLL_STAB_MIN, ROLL_STAB_MAX));
+  if (REVERSE_ROLL_STAB)
+    rollStab.writeMicroseconds(map(constrain(pWidth + roll_stab_offset, ROLL_STAB_MIN, ROLL_STAB_MAX), ROLL_STAB_MIN, ROLL_STAB_MAX, ROLL_STAB_MAX, ROLL_STAB_MIN));
+  else
+    rollStab.writeMicroseconds(constrain(pWidth + roll_stab_offset, ROLL_STAB_MIN, ROLL_STAB_MAX));
 }
 
 

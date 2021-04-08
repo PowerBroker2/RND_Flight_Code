@@ -74,6 +74,10 @@ bool pollC2()
     setElevator(inputs.pitch);
     setRudder(inputs.yaw);
     setAilerons(inputs.roll);
+
+#if USE_NOSEWHEEL
+    setNosewheel(inputs.yaw);
+#endif
     
     lossLinkTimer.start();
     telem.validFlags = telem.validFlags | 0x2;

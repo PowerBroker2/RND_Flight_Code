@@ -8,9 +8,9 @@
 
 #define IMU_PORT Wire
 
-#define COMPASS_RAD  vect.z()
+#define COMPASS_RAD  vect.x()
 #define PITCH_RAD    vect.y()
-#define ROLL_RAD     vect.x()
+#define ROLL_RAD     vect.z()
 
 
 
@@ -19,7 +19,7 @@ const int IMU_PERIOD = 20; // ms
 
 const bool REVERSE_COMPASS = false;
 const bool REVERSE_PITCH   = false;
-const bool REVERSE_ROLL    = false;
+const bool REVERSE_ROLL    = true;
 
 const bool FLIP_COMPASS = false;
 const bool FLIP_PITCH   = false;
@@ -86,11 +86,20 @@ void pollIMU()
     telem.courseAngleIMU = fmod(telem.courseAngleIMU + 180, 360);
 
   if (FLIP_PITCH)
-    telem.pitchAngle = fmod(telem.pitchAngle + 180, 360);
+  {
+    telem.pitchAngle += 180;
+
+    if (telem.pitchAngle > 180)
+      telem.pitchAngle -= 360;
+  }
 
   if (FLIP_ROLL)
-    telem.rollAngle = fmod(telem.rollAngle + 180 - 23, 360); // WTF
-    
+  {
+    telem.rollAngle += 180;
+
+    if (telem.rollAngle > 180)
+      telem.rollAngle -= 360;
+  }
 
   // Timestamp the new data - regardless of where this function was called
   imuTimer.start();
