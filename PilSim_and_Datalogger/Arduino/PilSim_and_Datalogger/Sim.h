@@ -197,6 +197,36 @@ void handleControllers()
         readNextWp();
         readWp = false;
       }
+
+      altitudeController.setpoint = alt;
+      headingController.setpoint  = heading(plane.lat, plane.lon, lat, lon);
+      iasController.setpoint      = ias;
+
+      float temp_alt_command = altitudeController.compute(plane);
+      if(headingController.status)
+        pitchController.setpoint = temp_alt_command;
+
+      float temp_pitch_command = map(pitchController.compute(plane), JOY_MIN, JOY_MAX, JOY_MAX, JOY_MIN);
+      if(pitchController.status)
+        pitch_command = temp_pitch_command;
+    
+      float temp_heading_command  = headingController.compute(plane);
+      if(headingController.status)
+        rollController.setpoint = temp_heading_command;
+
+      float temp_roll_command  = map(rollController.compute(plane), JOY_MIN, JOY_MAX, JOY_MAX, JOY_MIN);
+      if(rollController.status)
+        roll_command = temp_roll_command;
+    
+      float temp_ias_command  = iasController.compute(plane);
+      if(iasController.status)
+        throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
+      
+      if (distance(plane.lat, plane.lon, lat, lon) <= 15)
+      {
+        //navState = STRAIGHT;
+        readWp = true;
+      }
       
       break;
     }
