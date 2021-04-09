@@ -10,8 +10,8 @@ if __name__ == '__main__':
         
         while True:
             if telem.get_telemetry():
+                pitch  = telem.basic_telemetry['roll']
                 roll  = telem.basic_telemetry['pitch']
-                pich  = telem.basic_telemetry['roll']
                 hdg   = telem.basic_telemetry['heading']
                 alt   = telem.basic_telemetry['altitude']
                 lat   = telem.basic_telemetry['lat']
@@ -20,8 +20,8 @@ if __name__ == '__main__':
                 flaps = telem.basic_telemetry['flapState']
                 gear  = telem.basic_telemetry['gearState']
                 
-                telem_list = [roll,
-                              pich,
+                telem_list = [pitch,
+                              roll,
                               hdg,
                               alt,
                               lat,
@@ -29,8 +29,6 @@ if __name__ == '__main__':
                               ias,
                               flaps,
                               gear]
-                
-                print(telem_list)
                 
                 link.send(link.tx_obj(telem_list))
             

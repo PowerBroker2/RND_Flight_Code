@@ -161,35 +161,25 @@ void handleControllers()
         readWp = false;
       }
 
-      pitchController.setpoint   = 15;
+      pitchController.setpoint   = 20;
       headingController.setpoint = heading(plane.lat, plane.lon, lat, lon);
       iasController.setpoint     = ias;
 
-      float temp_pitch_command = -pitchController.compute(plane);
+      float temp_pitch_command = map(pitchController.compute(plane), JOY_MIN, JOY_MAX, JOY_MAX, JOY_MIN);
       if(pitchController.status)
         pitch_command = temp_pitch_command;
     
-      float temp_heading_command  = -headingController.compute(plane);
+      float temp_heading_command  = headingController.compute(plane);
       if(headingController.status)
         rollController.setpoint = temp_heading_command;
 
-      float temp_roll_command  = rollController.compute(plane);
+      float temp_roll_command  = map(rollController.compute(plane), JOY_MIN, JOY_MAX, JOY_MAX, JOY_MIN);
       if(rollController.status)
         roll_command = temp_roll_command;
     
       float temp_ias_command  = iasController.compute(plane);
       if(iasController.status)
-        throttle_command = temp_ias_command;
-
-      Serial.print("Pitch:\t\t\t"); Serial.println(plane.pitch);
-      Serial.print("Pitch setpoint:\t\t"); Serial.println(pitchController.setpoint);
-
-      Serial.print("Roll:\t\t\t"); Serial.println(plane.roll);
-      Serial.print("Roll setpoint:\t\t"); Serial.println(rollController.setpoint);
-      
-      Serial.print("Heading:\t\t"); Serial.println(plane.hdg);
-      Serial.print("Heading setpoint:\t"); Serial.println(headingController.setpoint);
-      Serial.println();
+        throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
