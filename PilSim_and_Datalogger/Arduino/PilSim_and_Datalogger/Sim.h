@@ -101,15 +101,15 @@ bool handleData()
   {
     feedback.rxObj(plane);
     
-    /*DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.roll);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.pitch);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.hdg);
-    DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.alt);
-    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lat);
-    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.lon);
-    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.ias);
-    //DEBUG_PORT.print(" "); DEBUG_PORT.print(plane.flaps);
-    //DEBUG_PORT.print(" "); DEBUG_PORT.println(plane.gear);
+    /*DEBUG_PORT.print("Roll: "); DEBUG_PORT.println(plane.roll);
+    DEBUG_PORT.print("Pitch: "); DEBUG_PORT.println(plane.pitch);
+    DEBUG_PORT.print("Heading: "); DEBUG_PORT.println(plane.hdg);
+    DEBUG_PORT.print("Altitude: "); DEBUG_PORT.println(plane.alt);
+    DEBUG_PORT.print("Latitude: "); DEBUG_PORT.println(plane.lat);
+    DEBUG_PORT.print("Longitude: "); DEBUG_PORT.println(plane.lon);
+    DEBUG_PORT.print("IAS: "); DEBUG_PORT.println(plane.ias);
+    DEBUG_PORT.print("Flaps: "); DEBUG_PORT.println(plane.flaps);
+    DEBUG_PORT.print("Gear: "); DEBUG_PORT.println(plane.gear);
     DEBUG_PORT.println();*/
 
     return true;
@@ -180,6 +180,14 @@ void handleControllers()
       float temp_ias_command  = iasController.compute(plane);
       if(iasController.status)
         throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
+
+      Serial.print("IAS: ");
+      Serial.println(plane.ias);
+      Serial.print("IAS setpoint: ");
+      Serial.println(iasController.setpoint);
+      Serial.print("IAS command: ");
+      Serial.println(throttle_command);
+      Serial.println();
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
@@ -221,6 +229,14 @@ void handleControllers()
       float temp_ias_command  = iasController.compute(plane);
       if(iasController.status)
         throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
+
+      Serial.print("IAS: ");
+      Serial.println(plane.ias);
+      Serial.print("IAS setpoint: ");
+      Serial.println(iasController.setpoint);
+      Serial.print("IAS command: ");
+      Serial.println(throttle_command);
+      Serial.println();
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
@@ -252,6 +268,12 @@ void handleControllers()
     case DISENGAGED:
     {
       
+      break;
+    }
+    
+    default:
+    {
+      navState = TAKEOFF;
       break;
     }
   }

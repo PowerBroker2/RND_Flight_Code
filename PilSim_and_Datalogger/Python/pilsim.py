@@ -26,9 +26,9 @@ if __name__ == '__main__':
                               alt,
                               lat,
                               lon,
-                              ias,
-                              flaps,
-                              gear]
+                              float(ias),
+                              float(flaps),
+                              float(gear)]
                 
                 link.send(link.tx_obj(telem_list))
             
