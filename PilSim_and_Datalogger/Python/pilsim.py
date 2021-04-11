@@ -5,8 +5,15 @@ from pySerialTransfer import pySerialTransfer as txfer
 if __name__ == '__main__':
     try:
         telem = telemetry.TelemInterface()
-        link = txfer.SerialTransfer('COM4')
-        link.open()
+        
+        while True:
+            try:
+                link = txfer.SerialTransfer('COM4')
+                link.open()
+                break
+                
+            except:
+                pass
         
         while True:
             if telem.get_telemetry():

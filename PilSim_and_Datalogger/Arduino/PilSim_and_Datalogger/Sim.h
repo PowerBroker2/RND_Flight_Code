@@ -10,7 +10,7 @@ const int JOY_MAX = 1023;
 const int JOY_MIN = 0;
 const int GEAR_TOGGLE_BUTTON = 1;
 const int FLAP_TOGGLE_BUTTON = 2;
-const int TAKEOFF_THRESH = 500;
+const int GROUND_MSL = 59;
 
 
 
@@ -180,14 +180,17 @@ void handleControllers()
       float temp_ias_command  = iasController.compute(plane);
       if(iasController.status)
         throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
+        
+      static bool raiseGear = true;
 
-      Serial.print("IAS: ");
-      Serial.println(plane.ias);
-      Serial.print("IAS setpoint: ");
-      Serial.println(iasController.setpoint);
-      Serial.print("IAS command: ");
-      Serial.println(throttle_command);
-      Serial.println();
+      if ((plane.alt > (GROUND_MSL + 20)) && raiseGear)
+      {
+        Joystick.button(1, 1);
+        delay(100);
+        Joystick.button(1, 0);
+        
+        raiseGear = false;
+      }
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
@@ -206,13 +209,9 @@ void handleControllers()
         readWp = false;
       }
 
-      altitudeController.setpoint = alt;
+      pitchController.setpoint    = degrees(atan((alt - plane.alt) / distance(plane.lat, plane.lon, lat, lon, false)));
       headingController.setpoint  = heading(plane.lat, plane.lon, lat, lon);
       iasController.setpoint      = ias;
-
-      float temp_alt_command = altitudeController.compute(plane);
-      if(headingController.status)
-        pitchController.setpoint = temp_alt_command;
 
       float temp_pitch_command = map(pitchController.compute(plane), JOY_MIN, JOY_MAX, JOY_MAX, JOY_MIN);
       if(pitchController.status)
@@ -229,14 +228,6 @@ void handleControllers()
       float temp_ias_command  = iasController.compute(plane);
       if(iasController.status)
         throttle_command = constrain(temp_ias_command, JOY_MIN, JOY_MAX);
-
-      Serial.print("IAS: ");
-      Serial.println(plane.ias);
-      Serial.print("IAS setpoint: ");
-      Serial.println(iasController.setpoint);
-      Serial.print("IAS command: ");
-      Serial.println(throttle_command);
-      Serial.println();
       
       if (distance(plane.lat, plane.lon, lat, lon) <= 15)
       {
