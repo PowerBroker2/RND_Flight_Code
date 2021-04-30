@@ -174,8 +174,8 @@ void readGPSData()
       plane.lat = fix.latitude();
       plane.lon = fix.longitude();
 
-      plane.cog_gps_calc = find_heading(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon);
-      plane.ias_gps_calc = find_distance(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon) / (3600000.0 / lossGPSTimer.timeDiff); // convert ms to hr
+      plane.cog_gps_calc = heading(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon);
+      plane.ias_gps_calc = distance(plane.prev_lat, plane.prev_lon, plane.lat, plane.lon) / (3600000.0 / lossGPSTimer.timeDiff); // convert ms to hr
 
       //record that fix data is valid
       validFlags |= FIX_VALID;

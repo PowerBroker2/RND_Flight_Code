@@ -59,7 +59,7 @@ Terminal myTerminal;
 
 
 
-bool useSD = true;
+bool useSD = false;
 char filename[20];
 int dataIndex = 0;
 
@@ -68,17 +68,17 @@ int dataIndex = 0;
 
 void setupLog()
 {
-  unsigned int flightCount = 1;
-  
-  if(!sd.begin(SD_CONFIG))
-  {
-    useSD = false;
-    Serial.println(F("SD iniatialization failed"));
-    delay(100);
-  }
-
   if(useSD)
   {
+    unsigned int flightCount = 1;
+    
+    if(!sd.begin(SD_CONFIG))
+    {
+      useSD = false;
+      Serial.println(F("SD iniatialization failed"));
+      delay(100);
+    }
+  
     sprintf(filename, "flight_%d.csv", flightCount);
   
     while(sd.exists(filename))
