@@ -1,7 +1,10 @@
 #pragma once
 
+
+
+
 #define FEEDBACK_PORT Serial1 // COM4
-#define DEBUG_PORT    Serial2 // COM10
+#define DEBUG_PORT    Serial  // COM10 if Serial2
 #define TELEM_PORT    Serial3
 
 #define ROTARY_BUTTON_PIN 21

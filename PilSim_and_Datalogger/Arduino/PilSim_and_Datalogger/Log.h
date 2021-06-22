@@ -1,9 +1,9 @@
 #pragma once
-
 #include "SdFat.h"
 #include "SerialTransfer.h"
 #include "Autopilot.h"
 #include "Board.h"
+#include "Sim.h"
 
 
 
@@ -60,11 +60,15 @@ FsFile myFile;
 SerialTransfer telemTransfer;
 state_params planeTelem;
 
-bool sdConnected    = false;
-bool wpFileSelected = false;
+bool sdConnected;
+bool wpFileSelected;
 char wpFile[MAX_WP_ROWS][MAX_WP_COLS][MAX_VAL_LEN];
+int wpfRow;
+int wpfCol;
+int numCols;
+int numWpts;
 char filename[20];
-int dataIndex = 0;
+int dataIndex;
 
 bool engageAP;
 uint8_t validFlags;
@@ -72,6 +76,8 @@ long pitchPulseLen;
 long rollPulseLen;
 long yawPulseLen;
 long throttlePulseLen;
+
+extern nav_state navState;
 
 
 
@@ -292,9 +298,14 @@ void loadWpFile(char* arr, int len)
       col++;
     }
 
+    numCols = col;
     col = 0;
     row++;
   }
 
+  wpfRow  = 1; // Skip header row
+  wpfCol  = 0;
+  numWpts = row;
   wpFileSelected = true;
+  navState = TAKEOFF;
 }
