@@ -8,11 +8,11 @@
 
 const int MAX_ROLL_RIGHT   = 35;
 const int MAX_ROLL_LEFT    = -35;
-const int ROLL_LIMIT_SCALE = 50;
+const int ROLL_LIMIT_SCALE = 35;
 
 const int MAX_PITCH_UP      = 35;
 const int MAX_PITCH_DOWN    = -35;
-const int PITCH_LIMIT_SCALE = 50;
+const int PITCH_LIMIT_SCALE = 35;
 
 
 
