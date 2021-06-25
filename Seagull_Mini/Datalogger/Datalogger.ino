@@ -26,7 +26,7 @@ const uint8_t SD_CS_PIN = SDCARD_SS_PIN;
 
 
 const char nameTemplate[] = "flight_%d.csv";
-const char headerRow[] = "Millis,"
+const char headerRow[] = "Micros,"
                          "Engage_Autopilot,"
                          "Roll_Limit,"
                          "Roll_Limit_Max_Right,"
