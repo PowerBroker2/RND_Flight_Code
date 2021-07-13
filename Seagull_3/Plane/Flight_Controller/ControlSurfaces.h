@@ -10,12 +10,12 @@
 
 
 const int ESC_PIN = S0;
-const int EL_PIN  = S1;
-const int RUD_PIN = S2;
-const int AIL_PIN = S3;
+const int EL_PIN  = S3;
+const int RUD_PIN = S4;
+const int AIL_PIN = S2;
 
 #if USE_NOSEWHEEL
-const int NOSE_PIN = S9;
+const int NOSE_PIN = S1;
 #endif
 
 const int ESC_MAX = 2000;
@@ -42,10 +42,10 @@ const int NOSE_MID = (NOSE_MAX + NOSE_MIN) / 2;
 
 const bool REVERSE_EL  = false;
 const bool REVERSE_RUD = false;
-const bool REVERSE_AIL = false;
+const bool REVERSE_AIL = true;
 
 #if USE_NOSEWHEEL
-const bool REVERSE_NOSE = false;
+const bool REVERSE_NOSE = true;
 #endif
 
 
@@ -68,7 +68,7 @@ int rud_offset = 0;
 int ail_offset = 0;
 
 #if USE_NOSEWHEEL
-int nose_offset = -100;
+int nose_offset = 50;
 #endif
 
 

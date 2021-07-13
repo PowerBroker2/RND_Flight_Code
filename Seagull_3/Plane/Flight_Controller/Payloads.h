@@ -86,7 +86,7 @@ void setTilt(const int& pWidth)
 
 void setupPayloads()
 {
-  pitchStab.attach(PITCH_STAB_PIN);
+  /*pitchStab.attach(PITCH_STAB_PIN);
   rollStab.attach(ROLL_STAB_PIN);
   pan.attach(PAN_PIN);
   tilt.attach(TILT_PIN);
@@ -94,7 +94,7 @@ void setupPayloads()
   setPitchStab(PITCH_STAB_MID);
   setRollStab(ROLL_STAB_MID);
   setPan(PAN_MID);
-  setTilt(TILT_MID);
+  setTilt(TILT_MID);*/
 }
 
 
@@ -103,8 +103,8 @@ void setupPayloads()
 
 void handlePayloads()
 {
-  setPitchStab(map(telem.pitchAngle, -135, 135, PITCH_STAB_MIN, PITCH_STAB_MAX));
+  /*setPitchStab(map(telem.pitchAngle, -135, 135, PITCH_STAB_MIN, PITCH_STAB_MAX));
   setRollStab( map(telem.rollAngle,  -135, 135, ROLL_STAB_MIN,  ROLL_STAB_MAX));
   setPan(PAN_MID);
-  setTilt(TILT_MID);
+  setTilt(TILT_MID);*/
 }

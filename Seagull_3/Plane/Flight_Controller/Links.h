@@ -34,8 +34,8 @@ void setupLinks()
   C2_PORT.begin(C2_BAUD);
   TELEM_PORT.begin(TELEM_BAUD);
   
-  commandTransfer.begin(C2_PORT);
-  telemTransfer.begin(TELEM_PORT);
+  commandTransfer.begin(C2_PORT, false);
+  telemTransfer.begin(TELEM_PORT, false);
 
   lossLinkTimer.begin(LOSS_LINK_TIMEOUT);
   telemTimer.begin(REPORT_TELEM_PERIOD);
